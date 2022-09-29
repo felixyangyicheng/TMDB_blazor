@@ -1,0 +1,46 @@
+﻿@typeparam T
+
+<table class="table table-dark">
+    <thead>
+        @TableHeader
+    </thead>
+    <tbody>
+        @foreach (var i in CurrentDisplay)
+        {
+             @ItemTemplate(i)
+           
+        }
+
+    </tbody>
+    <tfoot>
+        <tr>@TableFooter</tr>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            @if (TotalPages() > 1)
+            {
+                <div class="pager-display">
+                    @if (CurrentPage == 1)
+                    {
+                        <MudButton disabled>&laquo;</MudButton>
+                        <MudButton disabled>&lsaquo;</MudButton>
+                    }
+                    else
+                    {
+                        <MudButton @onclick="@MoveFirst" title="Move First">&laquo;</MudButton>
+                        <MudButton @onclick="@MoveBack" title="Move Back">&lsaquo;</MudButton>
+                    }
+                    <span>@CurrentPage of @TotalPages() </span>
+                    @if (!AtLastPage())
+                    {
+                        <MudButton @onclick="@MoveNext" title="Move Next">&rsaquo;</MudButton>
+                        <MudButton @onclick="@MoveLast" title="Move Last">&raquo;</MudButton>
+                    }
+                    else
+                    {
+                        <MudButton disabled>&rsaquo;</MudButton>
+                        <MudButton disabled>&raquo;</MudButton>
+                    }
+                </div>
+            }
+        </div>
+    </tfoot>
+</table>

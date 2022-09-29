@@ -1,0 +1,100 @@
+﻿@page "/"
+@using TMDbLib.Objects.Search
+@using TMDB_blazor.Components
+@using TMDB_blazor.Data
+@if (list != null)
+{
+
+
+
+    <div class="row" style="@popularStyle">
+        <div class="col">
+
+            <Populars OnSelectItem="Select"></Populars>
+        </div>
+        <div class="col">
+            @if(SelectItem!=null){
+
+                <MovieDetail SelectedItem="SelectItem" OnMovieViewed="AddViewed" OnMovieLiked="AddLiked" />
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <MudButton Color="Color.Primary" @onclick="e=>ChangeVisibility()">@PopularButtonString</MudButton>
+        <SearchBarItem OnSearchChanged="SearchChanged"/>
+
+    </div>
+    <div class="row">
+        <div class="col">
+            @if (favorites != null)
+            {
+
+                <GenericList T="UserMovie" Items="FiltredFavorites" ItemsPerPage="@itemsPerPage">
+                    <TableHeader>
+                        <tr>
+
+                            <th>Title</th>
+
+                            <th>Release Date</th>
+                            <th>Vote Average</th>
+                            <th>Vote Count</th>
+                        </tr>
+                    </TableHeader>
+                    <ItemTemplate Context="liked">
+                        <tr>
+
+                            <td>@liked.Title</td>
+                            <td>@(((DateTime)liked.ReleaseDate).ToString("d"))</td>
+                            <td>@liked.VoteAverage</td>
+                            <td>@liked.VoteCount</td>
+                        </tr>
+                    </ItemTemplate>
+                    <TableFooter></TableFooter>
+
+                </GenericList>
+
+            }
+        </div>
+        <div class="col">
+            @if (viewed != null)
+            {
+                <GenericList T="UserMovie" Items="FiltredViewed" ItemsPerPage="@itemsPerPage">
+                    <TableHeader>
+                        <tr>
+
+                        <th>Title</th>
+                        <th>Release Date</th>
+                        <th>Vote Average</th>
+                        <th>Vote Count</th>
+                        </tr>
+                    </TableHeader>
+                    <ItemTemplate Context="watch">
+                        <tr>
+
+                        <td>@watch.Title</td>
+                        <td>@(((DateTime)watch.ReleaseDate).ToString("d"))</td>
+
+                        <td>@watch.VoteAverage</td>
+                        <td>@watch.VoteCount</td>
+                        </tr>
+
+                    </ItemTemplate>
+                    <TableFooter></TableFooter>
+
+                </GenericList>
+            }
+        </div>
+
+    </div>
+
+}
+else
+{
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+}
+

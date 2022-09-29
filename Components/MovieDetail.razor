@@ -1,0 +1,43 @@
+﻿<div class="row">
+
+<div class="col">
+
+    <h3>Détail</h3>
+    <hr />
+    <div class="form-group bg-black text-light">
+        Id: @SelectedItem?.Id
+    </div>
+    <div class="form-group bg-black text-light">
+        Titre: @SelectedItem?.Title
+    </div>
+    <div class="form-group bg-black text-light">
+        Langue:  @SelectedItem?.OriginalLanguage
+    </div>
+    <div class="form-group bg-black text-light">
+        Titre d'origine: @SelectedItem?.OriginalTitle
+    </div>
+    <div class="form-group bg-black text-light">
+        <h3>
+            Résumé:
+        </h3>
+        <p>
+            @SelectedItem?.Overview
+        </p>
+    </div>
+</div>
+<div class="col">
+
+    <div class="form-group bg-black text-light">
+        <MudImage Src=@GetCompletedPosterPath(SelectedItem?.PosterPath) Width="150"
+                  Alt="AUCUNE IMAGE" Elevation="25" Class="rounded-lg ma-4" />
+
+    </div>
+    @if (SelectedItem != null)
+    {
+
+        <MudButton @onclick="e=>AddToViewed(SelectedItem)">Add to favorite list</MudButton>
+        <MudButton @onclick="e=>AddToFavorite(SelectedItem)">Add to viewed</MudButton>
+    }
+</div>
+
+</div>
