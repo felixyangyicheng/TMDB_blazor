@@ -1,43 +1,85 @@
 ﻿<div class="row">
 
-<div class="col">
+    <div class="col">
 
-    <h3>Détail</h3>
-    <hr />
-    <div class="form-group bg-black text-light">
-        Id: @SelectedItem?.Id
-    </div>
-    <div class="form-group bg-black text-light">
-        Titre: @SelectedItem?.Title
-    </div>
-    <div class="form-group bg-black text-light">
-        Langue:  @SelectedItem?.OriginalLanguage
-    </div>
-    <div class="form-group bg-black text-light">
-        Titre d'origine: @SelectedItem?.OriginalTitle
-    </div>
-    <div class="form-group bg-black text-light">
-        <h3>
-            Résumé:
-        </h3>
-        <p>
-            @SelectedItem?.Overview
-        </p>
-    </div>
-</div>
-<div class="col">
+        <h3>Detail</h3>
+        <hr />
+        <table class="table table-dark table-hover">
+            <thead></thead>
+            <tbody>
+                <tr>
+                    <td>
+                        Id
+                    </td>
+                    <td>
+                        @SelectedItem?.Id
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Title
+                    </td>
+                    <td>
+                        @SelectedItem?.Title
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Original Language
+                    </td>
+                    <td>
+                        @SelectedItem?.OriginalLanguage
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Average
+                    </td>
+                    <td>
+                        @SelectedItem?.VoteAverage
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Popularity
+                    </td>
+                    <td>
+                        @SelectedItem?.Popularity
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        +18 content?
+                    </td>
+                    <td>
+                        @(SelectedItem?.Adult ==true?"Yes":"No")
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-    <div class="form-group bg-black text-light">
-        <MudImage Src=@GetCompletedPosterPath(SelectedItem?.PosterPath) Width="150"
-                  Alt="AUCUNE IMAGE" Elevation="25" Class="rounded-lg ma-4" />
-
     </div>
-    @if (SelectedItem != null)
-    {
+    <div class="col">
+        <div class="form-group bg-black text-light">
+            <h3>
+                Summary:
+            </h3>
+            <p>
+                @SelectedItem?.Overview
+            </p>
+        </div>
 
-        <MudButton @onclick="e=>AddToViewed(SelectedItem)">Add to favorite list</MudButton>
-        <MudButton @onclick="e=>AddToFavorite(SelectedItem)">Add to viewed</MudButton>
-    }
-</div>
+        <div class="form-group bg-black text-light">
+            <MudImage Src=@GetCompletedPosterPath(SelectedItem?.PosterPath) Width="100"
+                      Alt="AUCUNE IMAGE" Elevation="25" Class="rounded-lg ma-4" />
+
+        </div>
+        @if (SelectedItem != null)
+        {
+
+            <MudButton Color="Color.Tertiary" @onclick="e=>AddToViewed(SelectedItem)">Add to viewed list</MudButton>
+            <MudButton Color="Color.Tertiary" @onclick="e=>AddToFavorite(SelectedItem)">Add to favorite list</MudButton>
+        }
+    </div>
 
 </div>

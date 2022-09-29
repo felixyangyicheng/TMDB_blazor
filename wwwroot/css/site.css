@@ -64,3 +64,29 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+    .tfoot{
+        width:max-content
+    }
+
+    .index-popular-hide{
+        display:none;
+
+    }
+
+.row .index-popular-show {
+    display: block;
+    animation: hideIndex 0.3s;
+    -moz-animation: hideIndex 0.3s; /*firefox*/
+    -webkit-animation: hideIndex 0.3s; /*safari & chrome*/
+    -o-animation: hideIndex 0.3s; /*opera*/
+}
+
+/*    @keyframes hideIndex{
+        0%{opacity:0;transform:translate(800px,0)}
+        100% {
+            opacity: 1;
+            transform: translate(0,0)
+        }
+    
+        }*/

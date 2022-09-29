@@ -6,22 +6,14 @@
 
 <MudLayout>
     <MudAppBar Style="background-color:black">
-       <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         My movie theater
+       <MudIconButton Href="/" Icon="@Icons.Material.Filled.PermMedia" Color="Color.Inherit" Edge="Edge.Start" />
+        <MudButton Href="/favorite">Favorites</MudButton>
+        <MudButton Href="/viewed">Viewed</MudButton>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" Style="background-color:black">
-          <NavMenu/>
-    </MudDrawer>
+
     <MudMainContent>
         @Body
     </MudMainContent>
 </MudLayout>
 
-@code {
-    bool _drawerOpen = true;
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-}

@@ -44,7 +44,7 @@ namespace TMDB_blazor.Pages
         public UserMovie LikedMovie { get; set; }
         public UserMovie ViewedMovie { get; set; }
         public bool popularVisible { get; set; } = true;
-        public string popularStyle { get; set; } = "display:block";
+        public string popularStyle { get; set; } = "row index-popular-show";
         public string PopularButtonString { get; set; } = "Close popular";
         public int itemsPerPage { get; set; } = 5;
         protected override async Task OnInitializedAsync()
@@ -101,6 +101,11 @@ namespace TMDB_blazor.Pages
                 };
                 viewed.Add(ViewedMovie);
                 string content = JsonSerializer.Serialize(viewed);
+  
+                if (viewed.Count == 1)
+                {
+                    content = "[" + content + "]";
+                }
                 File.WriteAllText("wwwroot/data/viewed.json", content);
                 Snackbar.Add("Movie added to list sucessfully");
                 StateHasChanged();
@@ -135,7 +140,11 @@ namespace TMDB_blazor.Pages
                     VoteCount = movie.VoteCount,
                 };
                 favorites.Add(LikedMovie);
-                string content = JsonSerializer.Serialize(LikedMovie);
+                string content = JsonSerializer.Serialize(favorites);
+                if (favorites.Count==1)
+                {
+                    content = "[" + content + "]";
+                }
                 File.WriteAllText("wwwroot/data/favorite.json", content);
                 Snackbar.Add("Movie added to list sucessfully");
                 StateHasChanged();
@@ -152,13 +161,13 @@ namespace TMDB_blazor.Pages
             popularVisible = !popularVisible;
             if (popularVisible == true)
             {
-                popularStyle = "display:block";
+                popularStyle = "row index-popular-show";
                 PopularButtonString = "Close popular";
                 itemsPerPage = 5;
             }
             else
             {
-                popularStyle = "display:none";
+                popularStyle = "index-popular-hide";
                 PopularButtonString = "Open popular";
                 itemsPerPage = 10;
 

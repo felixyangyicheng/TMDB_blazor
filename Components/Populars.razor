@@ -5,17 +5,16 @@
 	
 	<MudCarousel  @ref="_carousel" ItemsSource="@_source" @bind-SelectedIndex="selectedIndex" Style="height:300px;" ShowArrows="@_arrows" ShowBullets="@_bullets" EnableSwipeGesture="@_enableSwipeGesture" AutoCycle="@_autocycle">
 		<ItemTemplate>
-			<div class="d-flex flex-column flex-column justify-center" style="height:50%">
-				@*<MudIcon Class="mx-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />*@
-				<MudImage Src=@GetCompletedPosterPath(SearchContainer.Results[selectedIndex].PosterPath) Width="150" Alt=@AlternativeImage Elevation="25" Class="mx-auto rounded-lg ma-4"/>
+			<div class="d-flex flex-column flex-column justify-center" style="height:120%">
+				<MudImage Src=@GetCompletedPosterPath(SearchContainer.Results[selectedIndex].PosterPath) Width="130" Alt=@AlternativeImage Elevation="25" Class="mx-auto rounded-lg ma-4" />
 
-				<MudButton Variant="Variant.Text" DisableElevation="true" Color="Color.Default" @onclick=" e=>ClickMovie(selectedIndex)">@context</MudButton>
+				<MudButton Variant="Variant.Text" DisableElevation="true" Color="Color.Secondary" @onclick=" e=>ClickMovie(selectedIndex)">@context</MudButton>
 			</div>
 		</ItemTemplate>
 	</MudCarousel>
 
 	<MudSwitch @bind-Checked="@_autocycle" Color="Color.Primary">Auto Cycle</MudSwitch>
-	<br />
+
 
 	<MudSelect @bind-Value="selectedIndex" Style="width:50%">
 		@{
@@ -27,8 +26,12 @@
 					<p>@item.Title</p>
 
 				</MudSelectItem>
-
+				if (index==SearchContainer.Results.Count())
+				{
+					index = 0;
+				}
 				index++;
+
 			}
 		}
 	</MudSelect>

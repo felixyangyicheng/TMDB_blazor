@@ -62,7 +62,7 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// lecture automatique ou pas
         /// </summary>
-        private bool _autocycle = true;
+        private bool _autocycle = false;
         /// <summary>
         /// liste de nom des éléments à afficher dans caroussel
         /// </summary>
