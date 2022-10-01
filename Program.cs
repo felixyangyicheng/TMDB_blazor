@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
+using TMDB_blazor.Contracts;
+using TMDB_blazor.Services;
 using TMDbLib.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 //On ajoute le client TMDb comme un service, il peut être récupérer par injection.
 builder.Services.AddTransient((sp) => new TMDbClient("53a27e817e504cd4cae995309e05aecc"));
-
+builder.Services.AddScoped<IJsonFileRepository, JsonFileRepository>();
+builder.Services.AddScoped<ITmdbExtension, TmdbExtension>();
 
 var app = builder.Build();
 

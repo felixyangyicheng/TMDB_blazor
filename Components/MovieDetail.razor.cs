@@ -1,13 +1,19 @@
 ﻿using Microsoft.AspNetCore.Components;
 using TMDB_blazor.Data;
 using TMDbLib.Objects.General;
+using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.Search;
 
 namespace TMDB_blazor.Components
 {
     public partial class MovieDetail
     {
+        /// <summary>
+        ///  injection d'dépendence NavigationManager
+        /// </summary>
+        [Inject] NavigationManager Nav { get; set; }
         #region parameters
+
 
         /// <summary>
         /// Parametre:Item sélectionné
@@ -32,7 +38,9 @@ namespace TMDB_blazor.Components
 
         [Parameter] public SearchMovie LikedMovie { get; set; }
         #endregion parameters
-
+        #region properties
+        public int MyProperty { get; set; }
+        #endregion
         #region properties
 
         /// <summary>
@@ -65,6 +73,11 @@ namespace TMDB_blazor.Components
                 await OnMovieLiked.InvokeAsync(movie);
                 StateHasChanged();
             }
+        }
+
+        protected void Redirect(SearchMovie movie)
+        {
+            Nav.NavigateTo("/moviepage/" + movie.Id);
         }
         #endregion methods
     }

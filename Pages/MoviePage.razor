@@ -1,0 +1,254 @@
+﻿@page "/moviepage/{identity:int}"
+
+
+@if (Movie != null)
+{
+    <MudContainer>
+
+        <div class="row">
+            <div class="col">
+                <table class="table table-dark table-hover">
+                    <thead></thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Id
+                            </td>
+                            <td>
+                                @Movie.Id
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Title
+                            </td>
+                            <td>
+                                @Movie.Title
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Original Language
+                            </td>
+                            <td>
+                                @Movie.OriginalLanguage
+                            </td>
+                        </tr>
+                        @if (Movie.Reviews != null)
+                        {
+                            <tr>
+                                <td>
+                                    Movie.Reviews.Results.Capacity
+                                </td>
+                                <td>
+                                    @foreach (var item in Movie.Reviews?.Results)
+                                    {
+                                        <h4>@item.Author :</h4>
+                                        <p>@item.Content</p>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>
+                                Average
+                            </td>
+                            <td>
+                                @Movie.VoteAverage
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ReleaseDate
+                            </td>
+
+                            <td>@(((DateTime)Movie.ReleaseDate).ToString("d"))</td>
+                        </tr>
+
+                        <tr>
+
+
+                            <td>
+                                Popularity
+                            </td>
+                            <td>
+                                @Movie.Popularity
+                            </td>
+                        </tr>
+                        @if (@Movie.WatchProviders != null)
+                        {
+
+                            <tr>
+                                <td>
+                                    WatchProviders
+                                </td>
+                                <td>
+                                    @Movie.WatchProviders
+                                </td>
+                            </tr>
+                        }
+                        @if (@Movie.AlternativeTitles != null)
+                        {
+
+                            <tr>
+                                <td>
+                                    AlternativeTitles
+                                </td>
+                                <td>
+                                    @Movie.AlternativeTitles?.Titles
+                                </td>
+                            </tr>
+                        }
+
+                        @if (@Movie.Homepage != null)
+                        {
+                            <tr>
+                                <td>
+                                    Homepage
+                                </td>
+                                <td>
+                                    @Movie.Homepage
+                                </td>
+                            </tr>
+                        }
+                        @if (@Movie.Budget != null)
+                        {
+
+                            <tr>
+                                <td>
+                                    Budget
+                                </td>
+                                <td>
+                                    @Movie.Budget
+                                </td>
+                            </tr>
+                        }
+                        @if (@Movie.Changes != null)
+                        {
+
+                            <tr>
+                                <td>
+                                    Changes
+                                </td>
+                                <td>
+                                    @Movie.Changes
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>
+                                Imdb Id
+                            </td>
+                            <td>
+                                @Movie.ImdbId?
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Recommendations
+                            </td>
+                            <td>
+                                @foreach (var item in Movie.ProductionCompanies)
+                                {
+                                    <p>
+
+                                        @item.Name ,
+                                        @item.OriginCountry
+                                    </p>
+
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Genres
+                            </td>
+                            <td>
+                                @foreach (var item in (Movie.Genres))
+                                {
+                                    <p>@item.Name</p>
+                                }
+                            </td>
+                        </tr>
+                        @if (@Movie.Keywords != null)
+                        {
+
+                            <tr>
+                                <td>
+                                    Keywords
+                                </td>
+                                <td>
+                                    @Movie.Keywords?.Keywords
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>
+                                +18 content?
+                            </td>
+                            <td>
+                            <td>
+                                    @if (Movie.Adult == true)
+                                    {
+                                    <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
+
+                                    }
+                                    else
+                                    {
+
+                                    <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
+                                    }
+                            </td>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="col">
+                <div class="row">
+
+                    <div class="col">
+
+                        <div class="form-group bg-black text-light">
+                            <h3>
+                                Summary:
+                            </h3>
+                            <p>
+                                @Movie.Overview
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col">
+
+                        <div class="form-group bg-black text-light">
+                            <MudImage Src=@GetCompletedPosterPath(Movie.PosterPath) Width="200"
+                                  Alt="AUCUNE IMAGE" Elevation="25" Class="rounded-lg ma-4" />
+
+                        </div>
+                    </div>
+                </div>
+                @if (viewed.Any(a => a.Id == Movie.Id))
+                {
+                    <MudButton Color="Color.Warning"><MudIcon Icon="@Icons.Material.Rounded.RemoveRedEye"></MudIcon> Viewed</MudButton>
+
+                }
+                else
+                {
+
+                    <MudButton Color="Color.Tertiary" @onclick="e=>AddViewed(Movie)"><MudIcon Icon="@Icons.Material.Rounded.RemoveRedEye"></MudIcon> Add to viewed list</MudButton>
+                }
+                @if (favorites.Any(a => a.Id == Movie.Id))
+                {
+                    <MudButton Color="Color.Warning"><MudIcon Icon="@Icons.Material.Rounded.Favorite"></MudIcon> Liked</MudButton>
+
+                }
+                else
+                {
+                    <MudButton Color="Color.Tertiary" @onclick="e=>AddLiked(Movie)"><MudIcon Icon="@Icons.Material.Rounded.Favorite"></MudIcon> Add to favorite list</MudButton>
+
+                }
+            </div>
+        </div>
+    </MudContainer>
+}

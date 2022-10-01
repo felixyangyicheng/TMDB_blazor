@@ -4,6 +4,7 @@ using System;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using TMDB_blazor.Components;
+using TMDB_blazor.Contracts;
 using TMDB_blazor.Data;
 using TMDbLib.Client;
 using TMDbLib.Objects.Discover;
@@ -15,6 +16,8 @@ namespace TMDB_blazor.Pages
 {
     public partial class Index
     {
+
+        [Inject] IJsonFileRepository _json { get; set; }
         /// <summary>
         /// injection service Snackbar
         /// </summary>
@@ -23,6 +26,10 @@ namespace TMDB_blazor.Pages
         ///  injection d'dépendence TMDBClient
         /// </summary>
         [Inject] TMDbClient DataClient { get; set; }
+        /// <summary>
+        ///  injection d'dépendence NavigationManager
+        /// </summary>
+        [Inject] NavigationManager Nav { get; set; }
         /// <summary>
         ///		Obtient ou définit l'identifiant du film à afficher.
         /// </summary>
@@ -54,11 +61,9 @@ namespace TMDB_blazor.Pages
             dm = DataClient.DiscoverMoviesAsync();
 
             list = await dm.OrderBy(DiscoverMovieSortBy.Revenue).Query(1);
-            string jsonViewed = File.ReadAllText("wwwroot/data/viewed.json");
-            string jsonLiked = File.ReadAllText("wwwroot/data/favorite.json");
 
-            viewed = JsonSerializer.Deserialize<List<UserMovie>>(jsonViewed);
-            favorites = JsonSerializer.Deserialize<List<UserMovie>>(jsonLiked);
+            viewed=_json.ReadAll(Endpoints.jsonViewedPath);
+            favorites = _json.ReadAll(Endpoints.jsonLikedPath);
 
             FiltredFavorites = favorites;
             FiltredViewed = viewed;
@@ -100,13 +105,7 @@ namespace TMDB_blazor.Pages
                     VoteCount = movie.VoteCount,
                 };
                 viewed.Add(ViewedMovie);
-                string content = JsonSerializer.Serialize(viewed);
-  
-                if (viewed.Count == 1)
-                {
-                    content = "[" + content + "]";
-                }
-                File.WriteAllText("wwwroot/data/viewed.json", content);
+                _json.Save(viewed, Endpoints.jsonViewedPath);
                 Snackbar.Add("Movie added to list sucessfully");
                 StateHasChanged();
             }
@@ -140,12 +139,8 @@ namespace TMDB_blazor.Pages
                     VoteCount = movie.VoteCount,
                 };
                 favorites.Add(LikedMovie);
-                string content = JsonSerializer.Serialize(favorites);
-                if (favorites.Count==1)
-                {
-                    content = "[" + content + "]";
-                }
-                File.WriteAllText("wwwroot/data/favorite.json", content);
+                _json.Save(favorites, Endpoints.jsonLikedPath);
+
                 Snackbar.Add("Movie added to list sucessfully");
                 StateHasChanged();
             }
@@ -187,6 +182,11 @@ namespace TMDB_blazor.Pages
                                                     ||((DateTime)a.ReleaseDate).ToString("d").Contains(el)
                                                     )).ToList();
             StateHasChanged();
+        }
+
+        protected void Redirect(SearchMovie movie)
+        {
+            Nav.NavigateTo("/moviepage/" + movie.Id);
         }
     }
 }

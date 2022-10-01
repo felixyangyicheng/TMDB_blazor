@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Text.Json;
+using TMDB_blazor.Contracts;
 using TMDB_blazor.Data;
 using TMDB_blazor.Pages;
 using TMDbLib.Objects.Discover;
@@ -13,6 +14,7 @@ namespace TMDB_blazor.Components
         /// injection service Snackbar
         /// </summary>
         [Inject] ISnackbar Snackbar { get; set; }
+        [Inject] IJsonFileRepository _json { get; set; }
         public List<UserMovie> favorites { get; set; }
         public List<UserMovie> FiltredFavorites { get; set; }
         /// <summary>
@@ -21,8 +23,8 @@ namespace TMDB_blazor.Components
         public string ImagePrefix { get; set; } = Endpoints.ImagePathPrefix;
         protected override async Task OnInitializedAsync()
         {
-            string jsonLiked = File.ReadAllText("wwwroot/data/favorite.json");
-            favorites = JsonSerializer.Deserialize<List<UserMovie>>(jsonLiked);
+
+            favorites = _json.ReadAll(Endpoints.jsonLikedPath);
             FiltredFavorites = favorites;
             await base.OnInitializedAsync();
         }
@@ -43,7 +45,7 @@ namespace TMDB_blazor.Components
             {
                 jsonliked= "[" + jsonliked + "]";
             }
-            File.WriteAllText("wwwroot/data/viewed.json", jsonliked);
+            File.WriteAllText("wwwroot/data/favorite.json", jsonliked);
             Snackbar.Add("Movie from list sucessfully");
             StateHasChanged();
         }

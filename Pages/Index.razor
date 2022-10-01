@@ -58,6 +58,7 @@
                             <th>Release Date</th>
                             <th>Vote Average</th>
                             <th>Vote Count</th>
+                            <th>+18 Content?</th>
                         </tr>
                     </TableHeader>
                     <ItemTemplate Context="liked">
@@ -67,6 +68,18 @@
                             <td>@(((DateTime)liked.ReleaseDate).ToString("d"))</td>
                             <td>@liked.VoteAverage</td>
                             <td>@liked.VoteCount</td>
+                            <td>
+                                @if (liked.Adult == true)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
+
+                                }
+                                else
+                                {
+
+                                    <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
+                                }
+                            </td>
                         </tr>
                     </ItemTemplate>
                     <TableFooter></TableFooter>
@@ -87,6 +100,8 @@
                             <th>Release Date</th>
                             <th>Vote Average</th>
                             <th>Vote Count</th>
+                            <th>+18 Content?</th>
+
                         </tr>
                     </TableHeader>
                     <ItemTemplate Context="watch">
@@ -97,11 +112,24 @@
 
                             <td>@watch.VoteAverage</td>
                             <td>@watch.VoteCount</td>
+                            <td>
+                                @if (watch.Adult == true)
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
+
+                                }
+                                else
+                                {
+
+                                    <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
+                                }
+                            </td>
+
                         </tr>
 
                     </ItemTemplate>
                     <TableFooter>
-                            
+
 
                     </TableFooter>
 
