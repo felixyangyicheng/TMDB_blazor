@@ -7,17 +7,29 @@ namespace TMDB_blazor.Components
 {
     public partial class ViewedList
     {
+        #region dependency injection
         /// <summary>
         /// injection service Snackbar
         /// </summary>
         [Inject] ISnackbar Snackbar { get; set; }
+        #endregion
+        #region properties
+        /// <summary>
+        /// liste des films visionnés de json
+        /// </summary>
         public List<UserMovie> viewed { get; set; }
+        /// <summary>
+        /// liste filtrée des films visionnés
+        /// </summary>
         public List<UserMovie> FiltredViewed { get; set; }
    
         /// <summary>
         /// uri de l'image.
         /// </summary>
         public string ImagePrefix { get; set; } = Endpoints.ImagePathPrefix;
+        #endregion
+        #region methodes
+
         protected override async Task OnInitializedAsync()
         {
             string jsonViewed = File.ReadAllText("wwwroot/data/viewed.json");
@@ -25,10 +37,20 @@ namespace TMDB_blazor.Components
             FiltredViewed = viewed;
             await base.OnInitializedAsync();
         }
+        /// <summary>
+        /// Obtenir l'uri complet de l'affiche de film
+        /// </summary>
+        /// <param name="posterPath"></param>
+        /// <returns></returns>
         protected string GetCompletedPosterPath(string posterPath)
         {
             return ImagePrefix + posterPath;
         }
+        /// <summary>
+        /// Supprimer le film de la liste, puis ré-écrire la liste dans le fichier json
+        /// </summary>
+        /// <param name="userMovie"></param>
+        /// <returns></returns>
         protected async Task RemoveFromList(UserMovie userMovie)
         {
             string jsonViewed ="[]";
@@ -46,15 +68,20 @@ namespace TMDB_blazor.Components
             Snackbar.Add("Movie from list sucessfully");
             StateHasChanged();
         }
+        /// <summary>
+        /// Rechercher
+        /// </summary>
+        /// <param name="el"></param>
         protected void SearchChanged(string el)
         {
             FiltredViewed = viewed.Where(a => (a.Title.ToUpper().Contains(el.ToUpper())
                                             || a.OriginalTitle.ToUpper().Contains(el.ToUpper())
                                             || ((DateTime)a.ReleaseDate).ToString("d").Contains(el)
-
                                             )).ToList();
 
             StateHasChanged();
         }
+        #endregion
+
     }
 }

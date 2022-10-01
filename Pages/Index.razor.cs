@@ -16,6 +16,7 @@ namespace TMDB_blazor.Pages
 {
     public partial class Index
     {
+        #region denpency injection
 
         [Inject] IJsonFileRepository _json { get; set; }
         /// <summary>
@@ -34,9 +35,8 @@ namespace TMDB_blazor.Pages
         ///		Obtient ou définit l'identifiant du film à afficher.
         /// </summary>
         [Parameter] public int Identifier { get; set; }
-
-        public string ImagePrefix { get; set; } = Endpoints.ImagePathPrefix;
-        public string AlternativeImage { get; set; } = Endpoints.AlternativeImage;
+        #endregion
+        #region properties
 
         public SearchContainer<SearchMovie> list { get; set; }
 
@@ -45,15 +45,25 @@ namespace TMDB_blazor.Pages
         public List<UserMovie> FiltredFavorites { get; set; }
         public List<UserMovie> viewed { get; set; }
         public List<UserMovie> FiltredViewed { get; set; }
-        public List<SearchMovie> movies { get; set; }
-        public List<SearchContainer<SearchMovie>> Movies { get; set; }
         public SearchMovie SelectItem { get; set; }
         public UserMovie LikedMovie { get; set; }
         public UserMovie ViewedMovie { get; set; }
         public bool popularVisible { get; set; } = true;
+        /// <summary>
+        /// html class pour composant caroussel
+        /// </summary>
         public string popularStyle { get; set; } = "row index-popular-show";
+        /// <summary>
+        /// text affichage sur boutton de changement de visibilité de caroussel et détail de film
+        /// </summary>
         public string PopularButtonString { get; set; } = "Close popular";
+        /// <summary>
+        /// élément par page dans la liste(tableau) générique
+        /// </summary>
         public int itemsPerPage { get; set; } = 5;
+        #endregion
+        #region methods
+
         protected override async Task OnInitializedAsync()
         {
             //list = await DataClient.GetMoviePopularListAsync();
@@ -70,13 +80,19 @@ namespace TMDB_blazor.Pages
             await base.OnInitializedAsync();
         }
 
-
+        /// <summary>
+        /// passer l'instance de film sélectionné de composant caroussel au composant détail de film
+        /// </summary>
+        /// <param name="item"></param>
         void Select(SearchMovie item)
         {
             SelectItem = item;
         }
 
-
+        /// <summary>
+        /// Ajouter le film dans la liste des visionnés, puis ré-écrire dans le fichier json
+        /// </summary>
+        /// <param name="movie"></param>
         void AddViewed(SearchMovie movie)
         {
             if (viewed.Any(a => a.Id == movie.Id))
@@ -110,7 +126,10 @@ namespace TMDB_blazor.Pages
                 StateHasChanged();
             }
         }
-
+        /// <summary>
+        /// Ajouter le film dans la liste des préférés, puis ré-écrire dans le fichier json
+        /// </summary>
+        /// <param name="movie"></param>
         void AddLiked(SearchMovie movie)
         {
             if (favorites.Any(a => a.Id == movie.Id))
@@ -140,17 +159,10 @@ namespace TMDB_blazor.Pages
                 };
                 favorites.Add(LikedMovie);
                 _json.Save(favorites, Endpoints.jsonLikedPath);
-
                 Snackbar.Add("Movie added to list sucessfully");
                 StateHasChanged();
             }
-
         }
-        protected string GetCompletedPosterPath(string posterPath)
-        {
-            return ImagePrefix + posterPath;
-        }
-
         protected void ChangeVisibility()
         {
             popularVisible = !popularVisible;
@@ -165,13 +177,17 @@ namespace TMDB_blazor.Pages
                 popularStyle = "index-popular-hide";
                 PopularButtonString = "Open popular";
                 itemsPerPage = 10;
-
             }
             StateHasChanged();
         }
-
+        /// <summary>
+        /// Rechercher
+        /// </summary>
+        /// <param name="el"></param>
         protected void SearchChanged(string el)
         {
+            if (!string.IsNullOrEmpty(el)){
+
             FiltredViewed = viewed.Where(a => (a.Title.ToUpper().Contains(el.ToUpper()) 
                                             || a.OriginalTitle.ToUpper().Contains(el.ToUpper())
                                             ||((DateTime)a.ReleaseDate).ToString("d").Contains(el)
@@ -182,11 +198,17 @@ namespace TMDB_blazor.Pages
                                                     ||((DateTime)a.ReleaseDate).ToString("d").Contains(el)
                                                     )).ToList();
             StateHasChanged();
+            }
         }
-
+        /// <summary>
+        /// Rediriger vers la page détail de film
+        /// </summary>
+        /// <param name="movie"></param>
         protected void Redirect(SearchMovie movie)
         {
             Nav.NavigateTo("/moviepage/" + movie.Id);
         }
+        #endregion
+
     }
 }

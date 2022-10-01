@@ -53,11 +53,20 @@ namespace TMDB_blazor.Components
         public string AlternativeImage { get; set; } = Endpoints.AlternativeImage;
         #endregion
         #region methods
-
+        /// <summary>
+        /// Obtenir l"uri complet de l'affiche du film
+        /// </summary>
+        /// <param name="posterPath"></param>
+        /// <returns></returns>
         protected string? GetCompletedPosterPath(string posterPath)
         {
             return ImagePrefix + posterPath;
         }
+        /// <summary>
+        /// Ajouter le film dans la liste des visionnés
+        /// </summary>
+        /// <param name="movie"></param>
+        /// <returns></returns>
         protected async Task AddToViewed(SearchMovie movie)
         {
             if (movie != null)
@@ -66,6 +75,11 @@ namespace TMDB_blazor.Components
                 StateHasChanged();
             }
         }
+        /// <summary>
+        /// Ajouter le film dans la liste des préférés
+        /// </summary>
+        /// <param name="movie"></param>
+        /// <returns></returns>
         protected async Task AddToFavorite(SearchMovie movie)
         {
             if (movie != null)
@@ -74,7 +88,10 @@ namespace TMDB_blazor.Components
                 StateHasChanged();
             }
         }
-
+        /// <summary>
+        /// Rediriger vers la page pour les détail du film sélectionné
+        /// </summary>
+        /// <param name="movie"></param>
         protected void Redirect(SearchMovie movie)
         {
             Nav.NavigateTo("/moviepage/" + movie.Id);

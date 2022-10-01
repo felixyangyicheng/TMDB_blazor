@@ -72,25 +72,35 @@ namespace TMDB_blazor.Components
         /// </summary>
         private int selectedIndex = 0;
 
-        public List<Movie> Movies { get; set; }
+        //public List<Movie> Movies { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected override async Task OnParametersSetAsync()
         {
             SearchContainer = await DataClient.GetMoviePopularListAsync();
-
             foreach (var i in SearchContainer.Results)
             {
                 _source.Add(i.Title);
             }
-
             await base.OnParametersSetAsync();
         }
-
+        /// <summary>
+        /// Obtenir l'uri complet de l'affiche du film
+        /// </summary>
+        /// <param name="posterPath"></param>
+        /// <returns></returns>
         protected string GetCompletedPosterPath(string posterPath)
         {
             return ImagePrefix + posterPath;
         }
-
+        /// <summary>
+        /// sélectionné le film -> (attendre un callback dans un autre composant)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         protected async Task ClickMovie(int id)
         {
             await OnSelectItem.InvokeAsync(SearchContainer.Results[id]);

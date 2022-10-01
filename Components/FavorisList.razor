@@ -1,38 +1,28 @@
 ﻿@page "/favorite"
-@using TMDB_blazor.Data
-
-
 @if (favorites != null)
 {
     <div class="row">
         <SearchBarItem OnSearchChanged="SearchChanged" />
-
     </div>
-
     <GenericList T="UserMovie" Items="FiltredFavorites" ItemsPerPage="4">
         <TableHeader>
-     
-
             <tr>
                 <th style="width:10%">Poster</th>
                 <th>Title</th>
                 <th>OriginalTitle</th>
-                <th>OriginalLanguage</th>
+                <th>Language</th>
                 <th>Popularity</th>
                 <th>ReleaseDate</th>
-                <th>VoteAverage</th>
+                <th>Average</th>
                 <th>VoteCount</th>
                 <th>Overview</th>
-    
                 <th></th>
             </tr>
         </TableHeader>
         <ItemTemplate Context="i">
             <tr>
-
                 <td>
                     <MudImage Src=@GetCompletedPosterPath(i.PosterPath) Width="90" Alt="movie poster" Elevation="25" Class="mx-auto rounded-lg ma-4" />
-
                 </td>
                 <td>@i.Title</td>
                 <td>@i.OriginalTitle</td>
@@ -48,6 +38,5 @@
             </tr>
         </ItemTemplate>
         <TableFooter></TableFooter>
-
     </GenericList>
 }

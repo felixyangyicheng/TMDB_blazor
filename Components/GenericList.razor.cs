@@ -165,8 +165,5 @@ namespace TMDB_blazor.Components
             }
         }
         #endregion methods
-
-
-
     }
 }

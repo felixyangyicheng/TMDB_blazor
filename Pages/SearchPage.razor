@@ -31,94 +31,108 @@
     <SearchBarItem OnSearchChanged="InputChanged"></SearchBarItem>
     @if (DisplayResult != null)
     {
+        if (loading)
+        {
+          <p>
 
-        <GenericList T="UserMovie" Items="DisplayResult" ItemsPerPage="10">
-            <TableHeader>
-                <tr>Results</tr>
-                <tr>
-                    <th>Title</th>
-                    <th>Release Date</th>
-                    <th>Vote Average</th>
-                    <th>Vote Count</th>
-                    <th>Viewed?</th>
-                    <th>Liked?</th>
-                    <th>+18 Content?</th>
-                    <th></th>
-                </tr>
-            </TableHeader>
-            <ItemTemplate Context="r">
-                <tr>
-                    <td>@r.Title</td>
-                    <td>
-                        @if (r.ReleaseDate == null)
-                        {
-                            <p> Unknown</p>
+          Loading...
+          </p>
+            <Fold Color="rgba(245, 174, 39, 0.87)" />
+        }
+        else
+        {
 
-                        }
-                        else
-                        {
-                            @(((DateTime)r.ReleaseDate).ToString("d"))
+            <GenericList T="UserMovie" Items="DisplayResult" ItemsPerPage="10">
+                <TableHeader>
+                    <tr>Results</tr>
+                    <tr>
+                        <th>Title</th>
+                        <th>Release Date</th>
+                        <th>Vote Average</th>
+                        <th>Vote Count</th>
+                        <th>Viewed?</th>
+                        <th>Liked?</th>
+                        <th>+18 Content?</th>
+                        <th></th>
+                    </tr>
+                </TableHeader>
+                <ItemTemplate Context="r">
+                    <tr>
+                        <td>@r.Title</td>
+                        <td>
+                            @if (r.ReleaseDate == null)
+                            {
+                                <p> Unknown</p>
 
-                        }
-                    </td>
-                    <td>@r.VoteAverage</td>
-                    <td>@r.VoteCount</td>
+                            }
+                            else
+                            {
+                                @(((DateTime)r.ReleaseDate).ToString("d"))
 
-                    <td>
-                        @if (r.Viewed == null)
-                        {
-                         <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.Help"></MudIcon>
+                            }
+                        </td>
+                        <td>@r.VoteAverage</td>
+                        <td>@r.VoteCount</td>
 
-
-                        }
-                        else if(r.Viewed==true)
-                        {
-
-                            <MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.CheckCircle"></MudIcon>
-
-                        }else{
-                            <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.RemoveRedEye"></MudIcon>
-
-                        }
-                    </td>
-                    <td>
-                        @if (r.Favorite == null)
-                        {
-                            <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.StarBorder"></MudIcon>
+                        <td>
+                            @if (r.Viewed == null)
+                            {
+                                <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.Help"></MudIcon>
 
 
-                        }
-                        else if(r.Favorite==true){
-                            <MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.Star"></MudIcon>
+                            }
+                            else if (r.Viewed == true)
+                            {
 
-                        }
-                        else
-                        {
-                            <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.StarBorder"></MudIcon>
+                                <MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.CheckCircle"></MudIcon>
+
+                            }
+                            else
+                            {
+                                <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.RemoveRedEye"></MudIcon>
+
+                            }
+                        </td>
+                        <td>
+                            @if (r.Favorite == null)
+                            {
+                                <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.StarBorder"></MudIcon>
 
 
-                        }
-                    </td>
-                    <td>
-                        @if (r.Adult == true)
-                        {
-                            <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
-                        }
-                        else
-                        {
-                            <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
-                        }
-                    </td>
-                    <td>
+                            }
+                            else if (r.Favorite == true)
+                            {
+                                <MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.Star"></MudIcon>
 
-                        <MudIconButton Icon="@Icons.Material.Rounded.Web" Color="Color.Warning" @onclick="e=>Redirect(r)"></MudIconButton>
-                    </td>
+                            }
+                            else
+                            {
+                                <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.StarBorder"></MudIcon>
 
-                </tr>
-            </ItemTemplate>
-            <TableFooter></TableFooter>
 
-        </GenericList>
+                            }
+                        </td>
+                        <td>
+                            @if (r.Adult == true)
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
+                            }
+                        </td>
+                        <td>
+
+                            <MudIconButton Icon="@Icons.Material.Rounded.Web" Color="Color.Warning" @onclick="e=>Redirect(r)"></MudIconButton>
+                        </td>
+
+                    </tr>
+                </ItemTemplate>
+                <TableFooter></TableFooter>
+
+            </GenericList>
+        }
     }
 
 </MudContainer>

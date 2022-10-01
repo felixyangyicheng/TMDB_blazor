@@ -26,13 +26,26 @@ namespace TMDB_blazor.Services
             List<UserMovie> ViewedResult=new List<UserMovie>();
             List<UserMovie> LikedResult=new List<UserMovie>();
             var SearchResult = await DataClient.SearchMovieAsync(searchWord, 1, adult);
-   
-            foreach (var item in SearchResult.Results)
+
+            for (int i = 0; i < SearchResult.TotalPages; i++)
             {
-                var jsonSM = JsonSerializer.Serialize(item);
-                UserMovie um = JsonSerializer.Deserialize<UserMovie>(jsonSM);
-                HttpResult.Add(um);
+                var tmp =
+                DataClient.SearchMovieAsync(searchWord, i, adult).Result;
+                foreach (var item in SearchResult.Results)
+                {
+                    var jsonsm = JsonSerializer.Serialize(item);
+                    UserMovie um = JsonSerializer.Deserialize<UserMovie>(jsonsm);
+                    HttpResult.Add(um);
+                }
+
             }
+
+            //foreach (var item in SearchResult.Results)
+            //{
+            //    var jsonSM = JsonSerializer.Serialize(item);
+            //    UserMovie um = JsonSerializer.Deserialize<UserMovie>(jsonSM);
+            //    HttpResult.Add(um);
+            //}
             if (viewed==true)
             {
                 ViewedResult = _jsonFileRepository.ReadAll(Endpoints.jsonViewedPath)

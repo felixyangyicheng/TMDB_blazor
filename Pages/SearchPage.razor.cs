@@ -16,8 +16,13 @@ namespace TMDB_blazor.Pages
     {
 
         #region Inject
+        /// <summary>
+        /// injection d'dépendenc pour l'extension de recherche TMDB wrapper
+        /// </summary>
         [Inject] ITmdbExtension _TmdbExtension { get; set; }
-
+        /// <summary>
+        /// injection d'dépendenc pour la lecture et écriture fichier json
+        /// </summary>
         [Inject] IJsonFileRepository _json { get; set; }
 
         /// <summary>
@@ -36,28 +41,55 @@ namespace TMDB_blazor.Pages
         #region Parameters
         #endregion Parameters
         #region Properties
-        public string searchWord { get; set; }
+        /// <summary>
+        /// chaine de caractères de recherche
+        /// </summary>
+        public string searchWord { get; set; } 
+        /// <summary>
+        /// le résultat brut de API
+        /// </summary>
         public SearchContainer<SearchMovie> SearchResult { get; set; }
-
+        /// <summary>
+        /// Résultat à afficher
+        /// </summary>
         public List<UserMovie> DisplayResult { get; set; } = new List<UserMovie>();
+        /// <summary>
+        /// Liste de visionnés
+        /// </summary>
         public List<UserMovie> viewed { get; set; }
+        /// <summary>
+        /// liste de préférés
+        /// </summary>
         public List<UserMovie> favorites { get; set; }
+        /// <summary>
+        /// condition de recherche: films visionnés
+        /// </summary>
         public bool SearchViewedEnable { get; set; } = true;
+        /// <summary>
+        /// condition de recherche: films préférés
+        /// </summary>
         public bool SearchLikedEnable { get; set; } = true;
+        /// <summary>
+        /// condition de recherche: films avec contenu pour adults
+        /// </summary>
         public bool SearchAdultEnable { get; set; } = true;
+        /// <summary>
+        /// état de rechargement
+        /// </summary>
+        public bool loading { get; set; } = false;
 
         #endregion Properties
         #region Methods
 
         protected override async Task OnInitializedAsync()
         {
-            DisplayResult = new List<UserMovie>();
-          
-
-            viewed = _json.ReadAll(Endpoints.jsonViewedPath);
-
-            favorites = _json.ReadAll(Endpoints.jsonLikedPath);
-            List<UserMovie> commun  = (from a in viewed
+            DisplayResult = new List<UserMovie>();         
+            //liste des films visonnés
+            viewed = _json.ReadAll(Endpoints.jsonViewedPath);  
+            //liste des films préférés
+            favorites = _json.ReadAll(Endpoints.jsonLikedPath); 
+            //les éléments communs de liste des visionnés et celle des préférés
+            List<UserMovie> commun  = (from a in viewed      
                                   join b in favorites on a.Id equals b.Id
                                   select new UserMovie
                                   {
@@ -79,39 +111,29 @@ namespace TMDB_blazor.Pages
                                       VoteAverage = a.VoteAverage,
                                       VoteCount = a.VoteCount
                                   }).ToList();
-
-
-
+            //les éléments uniquement dans liste visionnés
             List<UserMovie> q1 = viewed.Where(a => !commun.Select(b => b.Id).Contains(a.Id)).ToList();
-
+            //les éléments uniquement dans liste préférés
             List<UserMovie> q2 = favorites.Where(a => !commun.Select(b => b.Id).Contains(a.Id)).ToList();
-
-
             DisplayResult.AddRange(q1);
             DisplayResult.AddRange(q2);
             DisplayResult.AddRange(commun);
-
-            foreach (var item in DisplayResult)
-            {
-                Console.WriteLine(item.Title + " viewed: " + item.Viewed + " liked: " + item.Favorite);
-            }
-            //DisplayResult = DisplayResult.DistinctBy(a => a.Id).ToList();
             await base.OnInitializedAsync();
         }
-
+        /// <summary>
+        /// quand la recherche est validée 
+        /// </summary>
+        /// <param name="searchWord"></param>
+        /// <returns></returns>
         protected async Task InputChanged(string searchWord)
         {
-
             DisplayResult.Clear();
-
             if (!string.IsNullOrEmpty(searchWord))
             {
-
-                DisplayResult = await _TmdbExtension.SearcheWithLocalFilter(searchWord, SearchViewedEnable, SearchLikedEnable, SearchAdultEnable);
-
-
+                loading = true;
+                DisplayResult = await _TmdbExtension.SearcheWithLocalFilter(searchWord, SearchViewedEnable, SearchLikedEnable, SearchAdultEnable);          
                 StateHasChanged();
-
+                loading = false;
             }
         }
         protected async Task ChangeSearchViewedCondition()
