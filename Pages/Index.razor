@@ -4,148 +4,150 @@
 @using TMDB_blazor.Data
 @if (list != null)
 {
+    <MudContainer>
 
 
 
-    <div class="@popularStyle">
-        <div class="col">
+        <div class="@popularStyle">
+            <div class="col">
 
-            <Populars OnSelectItem="Select"></Populars>
-        </div>
-        <div class="col">
-            @if (SelectItem != null)
-            {
+                <Populars OnSelectItem="Select"></Populars>
+            </div>
+            <div class="col">
+                @if (SelectItem != null)
+                {
 
-                <MovieDetail SelectedItem="SelectItem" OnMovieViewed="AddViewed" OnMovieLiked="AddLiked" />
-            }
-            else
-            {
-                <MudCard Style="background-color:#212529">
-                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
-                    <MudCardContent>
-                        <MudIcon Icon="@Icons.Material.Filled.ArrowBack"></MudIcon> <text>  Click poster to see details</text>
-                        <MudSkeleton Width="30%" Height="42px;" />
-                        <MudSkeleton Width="80%" />
-                        <MudSkeleton Width="100%" />
-                    </MudCardContent>
-                    <MudCardActions>
-                        <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
-                        <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
-                    </MudCardActions>
-                </MudCard>
-            }
-        </div>
-    </div>
-
-    <div class="row">
-        <MudButton Color="Color.Primary" @onclick="e=>ChangeVisibility()">@PopularButtonString</MudButton>
-        <SearchBarItem OnSearchChanged="SearchChanged" />
-
-    </div>
-    <div class="row">
-        <div class="col">
-            @if (favorites != null)
-            {
-
-                <GenericList T="UserMovie" Items="FiltredFavorites" ItemsPerPage="@itemsPerPage">
-                    <TableHeader>
-                        <tr>Favorites</tr>
-
-                        <tr>
-
-                            <th>Title</th>
-
-                            <th>Release Date</th>
-                            <th>Vote Average</th>
-                            <th>Vote Count</th>
-                            <th>+18 Content?</th>
-                        </tr>
-                    </TableHeader>
-                    <ItemTemplate Context="liked">
-                        <tr>
-
-                            <td>@liked.Title</td>
-                            <td>@(((DateTime)liked.ReleaseDate).ToString("d"))</td>
-                            <td>@liked.VoteAverage</td>
-                            <td>@liked.VoteCount</td>
-                            <td>
-                                @if (liked.Adult == true)
-                                {
-                                    <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
-
-                                }
-                                else
-                                {
-
-                                    <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
-                                }
-                            </td>
-                        </tr>
-                    </ItemTemplate>
-                    <TableFooter></TableFooter>
-
-                </GenericList>
-
-            }
-        </div>
-        <div class="col">
-            @if (viewed != null)
-            {
-                <GenericList T="UserMovie" Items="FiltredViewed" ItemsPerPage="@itemsPerPage">
-                    <TableHeader>
-                        <tr>Viewed</tr>
-                        <tr>
-
-                            <th>Title</th>
-                            <th>Release Date</th>
-                            <th>Vote Average</th>
-                            <th>Vote Count</th>
-                            <th>+18 Content?</th>
-
-                        </tr>
-                    </TableHeader>
-                    <ItemTemplate Context="watch">
-                        <tr>
-
-                            <td>@watch.Title</td>
-                            <td>@(((DateTime)watch.ReleaseDate).ToString("d"))</td>
-
-                            <td>@watch.VoteAverage</td>
-                            <td>@watch.VoteCount</td>
-                            <td>
-                                @if (watch.Adult == true)
-                                {
-                                    <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
-
-                                }
-                                else
-                                {
-
-                                    <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
-                                }
-                            </td>
-
-                        </tr>
-
-                    </ItemTemplate>
-                    <TableFooter>
-
-
-                    </TableFooter>
-
-                </GenericList>
-            }
+                        <MovieDetail SelectedItem="SelectItem" OnMovieViewed="AddViewed" OnMovieLiked="AddLiked" />
+                }
+                else
+                {
+                        <MudCard Style="background-color:#212529">
+                            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+                            <MudCardContent>
+                                <MudIcon Icon="@Icons.Material.Filled.ArrowBack"></MudIcon> <text>  Click poster to see details</text>
+                                <MudSkeleton Width="30%" Height="42px;" />
+                                <MudSkeleton Width="80%" />
+                                <MudSkeleton Width="100%" />
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
+                                <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
+                            </MudCardActions>
+                        </MudCard>
+                }
+            </div>
         </div>
 
-    </div>
+        <div class="row">
+            <MudButton Color="Color.Primary" @onclick="e=>ChangeVisibility()">@PopularButtonString</MudButton>
+            <SearchBarItem OnSearchChanged="SearchChanged" />
+
+        </div>
+        <div class="row">
+            <div class="col">
+                @if (favorites != null)
+                {
+
+                        <GenericList T="UserMovie" Items="FiltredFavorites" ItemsPerPage="@itemsPerPage">
+                            <TableHeader>
+                                <tr>Favorites</tr>
+
+                                <tr>
+
+                                    <th>Title</th>
+
+                                    <th>Release Date</th>
+                                    <th>Vote Average</th>
+                                    <th>Vote Count</th>
+                                    <th>+18 Content?</th>
+                                </tr>
+                            </TableHeader>
+                            <ItemTemplate Context="liked">
+                                <tr>
+
+                                    <td>@liked.Title</td>
+                                    <td>@(((DateTime)liked.ReleaseDate).ToString("d"))</td>
+                                    <td>@liked.VoteAverage</td>
+                                    <td>@liked.VoteCount</td>
+                                    <td>
+                                    @if (liked.Adult == true)
+                                    {
+                                                <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
+
+                                    }
+                                    else
+                                    {
+
+                                                <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
+                                    }
+                                    </td>
+                                </tr>
+                            </ItemTemplate>
+                            <TableFooter></TableFooter>
+
+                        </GenericList>
+
+                }
+            </div>
+            <div class="col">
+                @if (viewed != null)
+                {
+                        <GenericList T="UserMovie" Items="FiltredViewed" ItemsPerPage="@itemsPerPage">
+                            <TableHeader>
+                                <tr>Viewed</tr>
+                                <tr>
+
+                                    <th>Title</th>
+                                    <th>Release Date</th>
+                                    <th>Vote Average</th>
+                                    <th>Vote Count</th>
+                                    <th>+18 Content?</th>
+
+                                </tr>
+                            </TableHeader>
+                            <ItemTemplate Context="watch">
+                                <tr>
+
+                                    <td>@watch.Title</td>
+                                    <td>@(((DateTime)watch.ReleaseDate).ToString("d"))</td>
+
+                                    <td>@watch.VoteAverage</td>
+                                    <td>@watch.VoteCount</td>
+                                    <td>
+                                    @if (watch.Adult == true)
+                                    {
+                                                <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
+
+                                    }
+                                    else
+                                    {
+
+                                                <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
+                                    }
+                                    </td>
+
+                                </tr>
+
+                            </ItemTemplate>
+                            <TableFooter>
+
+
+                            </TableFooter>
+
+                        </GenericList>
+                }
+            </div>
+
+        </div>
+    </MudContainer>
 
 }
 else
 {
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
+          <p>
+
+          Loading...
+          </p>
+            <Fold Color="rgba(245, 174, 39, 0.87)" />
 }
 

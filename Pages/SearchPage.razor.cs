@@ -139,19 +139,34 @@ namespace TMDB_blazor.Pages
         protected async Task ChangeSearchViewedCondition()
         {
             SearchViewedEnable = !SearchViewedEnable;
-
-
             DisplayResult.Clear();
             StateHasChanged();
-
         }
         protected async Task ChangeSearchLikedCondition()
         {
             SearchLikedEnable = !SearchLikedEnable;
-
             DisplayResult.Clear();
             StateHasChanged();
+        }
 
+        protected void OrderByReleaseDate()
+        {
+
+            DisplayResult = DisplayResult
+            .OrderBy(c=>c.VoteCount)
+            //.OrderBy(d=>d.ReleaseDate)
+            .ToList();
+            Console.WriteLine(DisplayResult.Count());
+            foreach (var item in DisplayResult)
+            {
+                Console.WriteLine(item.VoteCount);
+            }
+            StateHasChanged();
+
+        }
+        protected async Task OrderByReleaseDateDesc()
+        {
+            DisplayResult.OrderByDescending(d=>d.ReleaseDate).ToList();
         }
         protected void Redirect(SearchMovie movie)
         {

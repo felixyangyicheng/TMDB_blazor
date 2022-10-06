@@ -28,6 +28,7 @@
     <MudToggleIconButton @bind-Toggled="@SearchAdultEnable"
                          Icon="@Icons.Material.Filled.ChildCare" Color="@Color.Success" Title="Off"
                          ToggledIcon="@Icons.Material.Filled.Warning" ToggledColor="@Color.Error" ToggledTitle="On" />
+    <MudButton Color="Color.Primary"  @onclick="e=>OrderByReleaseDate()">Sort by date</MudButton>
     <SearchBarItem OnSearchChanged="InputChanged"></SearchBarItem>
     @if (DisplayResult != null)
     {

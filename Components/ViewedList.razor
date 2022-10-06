@@ -1,46 +1,50 @@
 ﻿@page "/viewed"
 @if (FiltredViewed != null)
 {
-    <div class="row">
-        <SearchBarItem OnSearchChanged="SearchChanged" />
-    </div>
-    <GenericList T="UserMovie" Items="FiltredViewed" ItemsPerPage="4">
-        <TableHeader>
-            <tr>
-                <th style="width: min-content;">Poster</th>
-                <th>Title</th>
-                <th>OriginalTitle</th>
-                <th>Language</th>
-                <th>Popularity</th>
-                <th>ReleaseDate</th>
-                <th>Average</th>
-                <th>VoteCount</th>
-                <th>Overview</th>
-                <th></th>
-            </tr>
-        </TableHeader>
-        <ItemTemplate Context="i">
-            <tr>
-                <td>
-                    <MudImage Src=@GetCompletedPosterPath(i.PosterPath) Width="90" Alt="movie poster" Elevation="25" Class="mx-auto rounded-lg ma-4" />
-                </td>
-                <td>@i.Title</td>
-                <td>@i.OriginalTitle</td>
-                <td>@i.OriginalLanguage</td>
-                <td>@i.Popularity</td>
-                <td>@(((DateTime)i.ReleaseDate).ToString("d"))</td>
-                <td>@i.VoteAverage</td>
-                <td>@i.VoteCount</td>
-                <td>@i.Overview</td>
-                <td>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Warning" @onclick="e=>RemoveFromList(i)"></MudIconButton>
-                </td>
-            </tr>
-        </ItemTemplate>
-        <TableFooter>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-        </TableFooter>
-    </GenericList>
+        <MudContainer>
+
+        <div class="row">
+            <SearchBarItem OnSearchChanged="SearchChanged" />
+        </div>
+        <GenericList T="UserMovie" Items="FiltredViewed" ItemsPerPage="4">
+            <TableHeader>
+                <tr>
+                    <th style="width: min-content;">Poster</th>
+                    <th>Title</th>
+                    <th>OriginalTitle</th>
+                    <th>Language</th>
+                    <th>Popularity</th>
+                    <th>ReleaseDate</th>
+                    <th>Average</th>
+                    <th>VoteCount</th>
+                    <th>Overview</th>
+                    <th></th>
+                </tr>
+            </TableHeader>
+            <ItemTemplate Context="i">
+                <tr>
+                    <td>
+                        <MudImage Src=@GetCompletedPosterPath(i.PosterPath) Width="90" Alt="movie poster" Elevation="25" Class="mx-auto rounded-lg ma-4" />
+                    </td>
+                    <td>@i.Title</td>
+                    <td>@i.OriginalTitle</td>
+                    <td>@i.OriginalLanguage</td>
+                    <td>@i.Popularity</td>
+                    <td>@(((DateTime)i.ReleaseDate).ToString("d"))</td>
+                    <td>@i.VoteAverage</td>
+                    <td>@i.VoteCount</td>
+                    <td>@i.Overview</td>
+                    <td>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Warning" @onclick="e=>RemoveFromList(i)"></MudIconButton>
+                    </td>
+                </tr>
+            </ItemTemplate>
+            <TableFooter>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+            </TableFooter>
+        </GenericList>
+        </MudContainer>
+
 }
