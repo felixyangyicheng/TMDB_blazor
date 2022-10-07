@@ -217,6 +217,10 @@
                             <p>
                                 @Movie.Overview
                             </p>
+                        
+                            <iframe type="text/html" class="w-100"
+                                       style="max-width:800px;" src=@GetMovieTrailer(Movie.Id) frameborder="0"
+                                allowfullscreen></iframe>
                         </div>
                     </div>
                     <div class="col">
@@ -228,6 +232,8 @@
                         </div>
                     </div>
                 </div>
+
+
                 @if (viewed.Any(a => a.Id == Movie.Id))
                 {
                     <MudButton Color="Color.Warning"><MudIcon Icon="@Icons.Material.Rounded.RemoveRedEye"></MudIcon> Viewed</MudButton>
@@ -248,6 +254,7 @@
                     <MudButton Color="Color.Tertiary" @onclick="e=>AddLiked(Movie)"><MudIcon Icon="@Icons.Material.Rounded.Favorite"></MudIcon> Add to favorite list</MudButton>
 
                 }
+
             </div>
         </div>
     </MudContainer>

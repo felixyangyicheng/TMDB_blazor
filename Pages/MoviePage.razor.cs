@@ -141,6 +141,14 @@ namespace TMDB_blazor.Pages
         {
             return ImagePrefix + posterPath;
         }
+
+        protected  string GetMovieTrailer(int id)
+        {
+            var result = DataClient.GetMovieVideosAsync(id).Result;
+            var youtubeKey=result.Results.First().Key;
+
+            return $"https://www.youtube.com/embed/{youtubeKey}";
+        }
         #endregion Methods
     }
 }
