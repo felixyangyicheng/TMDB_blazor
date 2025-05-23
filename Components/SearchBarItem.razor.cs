@@ -7,7 +7,7 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// chaine de caractère de recherche
         /// </summary>
-        public string SearchTerm { get; set; }
+        public string SearchTerm { get; set; } = "";
         /// <summary>
         /// Parametre: notification de chaine de caractère de recherche
         /// </summary>

@@ -73,14 +73,14 @@ namespace TMDB_blazor.Components
         /// Rechercher
         /// </summary>
         /// <param name="el"></param>
-        protected void SearchChanged(string el)
+        protected async Task SearchChanged(string el)
         {
             FiltredViewed = viewed.Where(a => (a.Title.ToUpper().Contains(el.ToUpper())
                                             || a.OriginalTitle.ToUpper().Contains(el.ToUpper())
                                             || ((DateTime)a.ReleaseDate).ToString("d").Contains(el)
                                             )).ToList();
-
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
+      
         }
         #endregion
 

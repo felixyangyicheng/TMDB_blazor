@@ -13,17 +13,27 @@
 	<MudSelect @bind-Value="selectedIndex" Style="width:50%">
 		@{
 			int index = 0;
-			foreach (var item in SearchContainer.Results)
+			if (SearchContainer.Results==null)
 			{
-				<MudSelectItem Value="@index">
+				<p>
+				loading..
+				</p>
+			}
+			else
+			{
 				
-					<p>@item.Title</p>
-				</MudSelectItem>
-				if (index==SearchContainer.Results.Count())
+				foreach (var item in SearchContainer.Results)
 				{
-					index = 0;
+					<MudSelectItem Value="@index">
+				
+						<p>@item.Title</p>
+					</MudSelectItem>
+					if (index==SearchContainer.Results.Count())
+					{
+						index = 0;
+					}
+					index++;
 				}
-				index++;
 			}
 		}
 	</MudSelect>

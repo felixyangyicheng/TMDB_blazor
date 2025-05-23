@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using TMDB_blazor.Components;
@@ -18,19 +19,19 @@ namespace TMDB_blazor.Pages
     {
         #region denpency injection
 
-        [Inject] IJsonFileRepository _json { get; set; }
+        [Inject, NotNull] IJsonFileRepository _json { get; set; } = default!;
         /// <summary>
         /// injection service Snackbar
         /// </summary>
-        [Inject] ISnackbar Snackbar { get; set; }
+        [Inject, NotNull] ISnackbar Snackbar { get; set; } = default!;
         /// <summary>
         ///  injection d'dépendence TMDBClient
         /// </summary>
-        [Inject] TMDbClient DataClient { get; set; }
+        [Inject, NotNull] TMDbClient DataClient { get; set; } = default!;
         /// <summary>
         ///  injection d'dépendence NavigationManager
         /// </summary>
-        [Inject] NavigationManager Nav { get; set; }
+        [Inject, NotNull] NavigationManager Nav { get; set; } = default!;
         /// <summary>
         ///		Obtient ou définit l'identifiant du film à afficher.
         /// </summary>
@@ -38,16 +39,16 @@ namespace TMDB_blazor.Pages
         #endregion
         #region properties
 
-        public SearchContainer<SearchMovie> list { get; set; }
+        public SearchContainer<SearchMovie> list { get; set; } =new();
 
-        public DiscoverMovie dm { get; set; }
-        public List<UserMovie> favorites { get; set; }
-        public List<UserMovie> FiltredFavorites { get; set; }
-        public List<UserMovie> viewed { get; set; }
-        public List<UserMovie> FiltredViewed { get; set; }
-        public SearchMovie SelectItem { get; set; }
-        public UserMovie LikedMovie { get; set; }
-        public UserMovie ViewedMovie { get; set; }
+        public DiscoverMovie dm { get; set; } =default!;
+        public List<UserMovie> favorites { get; set; } = new();
+        public List<UserMovie> FiltredFavorites { get; set; } = new();
+        public List<UserMovie> viewed { get; set; } = new();
+        public List<UserMovie> FiltredViewed { get; set; } = new();
+        public SearchMovie SelectItem { get; set; } = new();
+        public UserMovie LikedMovie { get; set; } = new();
+        public UserMovie ViewedMovie { get; set; } = new();
         public bool popularVisible { get; set; } = true;
         /// <summary>
         /// html class pour composant caroussel
