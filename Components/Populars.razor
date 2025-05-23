@@ -9,7 +9,7 @@
 			</div>
 		</ItemTemplate>
 	</MudCarousel>
-	<MudSwitch @bind-Checked="@_autocycle" Color="Color.Primary">Auto Cycle</MudSwitch>
+	<MudSwitch T="bool" @bind-Value="@_autocycle" Color="Color.Primary">Auto Cycle</MudSwitch>
 	<MudSelect @bind-Value="selectedIndex" Style="width:50%">
 		@{
 			int index = 0;

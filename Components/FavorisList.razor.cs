@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using TMDB_blazor.Contracts;
 using TMDB_blazor.Data;
@@ -13,19 +14,19 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// injection service Snackbar
         /// </summary>
-        [Inject] ISnackbar Snackbar { get; set; }
+        [Inject, NotNull] ISnackbar Snackbar { get; set; } = default!;
         /// <summary>
         /// injection d'dépendenc pour la lecture et écriture fichier json
         /// </summary>
-        [Inject] IJsonFileRepository _json { get; set; }
+        [Inject, NotNull] IJsonFileRepository _json { get; set; } = default!;
         /// <summary>
         /// liste des préférés de json
         /// </summary>
-        public List<UserMovie> favorites { get; set; }
+        public List<UserMovie> favorites { get; set; } = new List<UserMovie>();
         /// <summary>
         /// liste filtrée des préférés
         /// </summary>
-        public List<UserMovie> FiltredFavorites { get; set; }
+        public List<UserMovie> FiltredFavorites { get; set; } = new List<UserMovie>();
         /// <summary>
         /// uri de l'image.
         /// </summary>
@@ -69,19 +70,20 @@ namespace TMDB_blazor.Components
             }
             File.WriteAllText("wwwroot/data/favorite.json", jsonliked);
             Snackbar.Add("Movie from list sucessfully");
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
         /// <summary>
         /// Rechercher 
         /// </summary>
         /// <param name="el"></param>
-        protected void SearchChanged(string el)
+        protected async Task SearchChanged(string el)
         {
             FiltredFavorites = favorites.Where(a => (a.Title.ToUpper().Contains(el.ToUpper())
                                             || a.OriginalTitle.ToUpper().Contains(el.ToUpper())
                                             || ((DateTime)a.ReleaseDate).ToString("d").Contains(el)
                                             )).ToList();
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
+
         }
     }
 }

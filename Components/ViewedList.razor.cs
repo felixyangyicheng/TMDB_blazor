@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using TMDB_blazor.Data;
 
@@ -11,17 +12,17 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// injection service Snackbar
         /// </summary>
-        [Inject] ISnackbar Snackbar { get; set; }
+        [Inject, NotNull] ISnackbar Snackbar { get; set; } = default!;
         #endregion
         #region properties
         /// <summary>
         /// liste des films visionnés de json
         /// </summary>
-        public List<UserMovie> viewed { get; set; }
+        public List<UserMovie> viewed { get; set; }= new List<UserMovie>();
         /// <summary>
         /// liste filtrée des films visionnés
         /// </summary>
-        public List<UserMovie> FiltredViewed { get; set; }
+        public List<UserMovie> FiltredViewed { get; set; } = new List<UserMovie>();
    
         /// <summary>
         /// uri de l'image.
@@ -33,7 +34,7 @@ namespace TMDB_blazor.Components
         protected override async Task OnInitializedAsync()
         {
             string jsonViewed = File.ReadAllText("wwwroot/data/viewed.json");
-            viewed = JsonSerializer.Deserialize<List<UserMovie>>(jsonViewed);
+            viewed = JsonSerializer.Deserialize<List<UserMovie>>(jsonViewed)??throw new NullReferenceException("viewd json is empty");
             FiltredViewed = viewed;
             await base.OnInitializedAsync();
         }
@@ -66,7 +67,7 @@ namespace TMDB_blazor.Components
             }
             File.WriteAllText("wwwroot/data/viewed.json", jsonViewed);
             Snackbar.Add("Movie from list sucessfully");
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
         /// <summary>
         /// Rechercher

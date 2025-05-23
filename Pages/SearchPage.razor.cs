@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using TMDB_blazor.Contracts;
@@ -19,24 +20,24 @@ namespace TMDB_blazor.Pages
         /// <summary>
         /// injection d'dépendenc pour l'extension de recherche TMDB wrapper
         /// </summary>
-        [Inject] ITmdbExtension _TmdbExtension { get; set; }
+        [Inject, NotNull] ITmdbExtension _TmdbExtension { get; set; } = default!;
         /// <summary>
         /// injection d'dépendenc pour la lecture et écriture fichier json
         /// </summary>
-        [Inject] IJsonFileRepository _json { get; set; }
+        [Inject, NotNull] IJsonFileRepository _json { get; set; } = default!;
 
         /// <summary>
         ///  injection d'dépendence NavigationManager
         /// </summary>
-        [Inject] NavigationManager Nav { get; set; }
+        [Inject, NotNull] NavigationManager Nav { get; set; } = default!;
         /// <summary>
         /// injection service Snackbar
         /// </summary>
-        [Inject] ISnackbar Snackbar { get; set; }
+        [Inject, NotNull] ISnackbar Snackbar { get; set; } = default!;
         /// <summary>
         ///  injection d'dépendence TMDBClient
         /// </summary>
-        [Inject] TMDbClient DataClient { get; set; }
+        [Inject, NotNull] TMDbClient DataClient { get; set; } = default!;
         #endregion Inject
         #region Parameters
         #endregion Parameters
@@ -44,11 +45,11 @@ namespace TMDB_blazor.Pages
         /// <summary>
         /// chaine de caractères de recherche
         /// </summary>
-        public string searchWord { get; set; } 
+        public string searchWord { get; set; } = "";
         /// <summary>
         /// le résultat brut de API
         /// </summary>
-        public SearchContainer<SearchMovie> SearchResult { get; set; }
+        public SearchContainer<SearchMovie> SearchResult { get; set; } = new();
         /// <summary>
         /// Résultat à afficher
         /// </summary>
@@ -56,11 +57,11 @@ namespace TMDB_blazor.Pages
         /// <summary>
         /// Liste de visionnés
         /// </summary>
-        public List<UserMovie> viewed { get; set; }
+        public List<UserMovie> viewed { get; set; } = new();
         /// <summary>
         /// liste de préférés
         /// </summary>
-        public List<UserMovie> favorites { get; set; }
+        public List<UserMovie> favorites { get; set; } = new();
         /// <summary>
         /// condition de recherche: films visionnés
         /// </summary>
@@ -140,13 +141,15 @@ namespace TMDB_blazor.Pages
         {
             SearchViewedEnable = !SearchViewedEnable;
             DisplayResult.Clear();
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
+            
         }
         protected async Task ChangeSearchLikedCondition()
         {
             SearchLikedEnable = !SearchLikedEnable;
             DisplayResult.Clear();
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
+
         }
 
         protected void OrderByReleaseDate()
@@ -164,7 +167,7 @@ namespace TMDB_blazor.Pages
             StateHasChanged();
 
         }
-        protected async Task OrderByReleaseDateDesc()
+        protected void OrderByReleaseDateDesc()
         {
             DisplayResult.OrderByDescending(d=>d.ReleaseDate).ToList();
         }

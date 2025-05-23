@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
+using System.Diagnostics.CodeAnalysis;
 using TMDB_blazor.Data;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
@@ -16,7 +17,7 @@ namespace TMDB_blazor.Components
         /// <summary>
         ///  injection d'dépendence TMDBClient
         /// </summary>
-        [Inject] TMDbClient DataClient { get; set; }
+        [Inject, NotNull] TMDbClient DataClient { get; set; } = default!;
         /// <summary>
         ///		Obtient ou définit l'identifiant du film à afficher.
         /// </summary>
@@ -28,11 +29,11 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// Parametre: un film sélectionné
         /// </summary>
-        [Parameter] public SearchMovie SelectedItem { get; set; }
+        [Parameter, NotNull] public SearchMovie SelectedItem { get; set; } = default!;
         /// <summary>
         /// uri prefix of image
         /// </summary>
-   
+
 
         public string ImagePrefix { get; set; } = Endpoints.ImagePathPrefix;
         /// <summary>
@@ -42,11 +43,11 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// Object retourné de la fonction GetMoviePopularListAsync().Result
         /// </summary>
-        public SearchContainer<SearchMovie> SearchContainer { get; set; }
+        public SearchContainer<SearchMovie> SearchContainer { get; set; } = new();
         /// <summary>
         /// nom de MudCarousel
         /// </summary>
-        private MudCarousel<string> _carousel;
+        private MudCarousel<string> _carousel { get; set; } = new();
         /// <summary>
         /// les flèches ou pas
         /// </summary>
@@ -62,7 +63,7 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// lecture automatique ou pas
         /// </summary>
-        private bool _autocycle = false;
+        public bool _autocycle = false;
         /// <summary>
         /// liste de nom des éléments à afficher dans caroussel
         /// </summary>

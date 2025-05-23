@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Principal;
 using System.Text.Json;
 using TMDB_blazor.Data;
@@ -16,11 +17,11 @@ namespace TMDB_blazor.Pages
         /// <summary>
         /// injection service Snackbar
         /// </summary>
-        [Inject] ISnackbar Snackbar { get; set; }
+        [Inject, NotNull] ISnackbar Snackbar { get; set; } = default!;
         /// <summary>
         ///  injection d'dépendence TMDBClient
         /// </summary>
-        [Inject] TMDbClient DataClient { get; set; }
+        [Inject, NotNull] TMDbClient DataClient { get; set; } = default!;
         #endregion Injection
 
         #region Parameters
@@ -30,14 +31,14 @@ namespace TMDB_blazor.Pages
 
         #region Properties
 
-        public SearchContainer<SearchMovie> ApiList { get; set; }
-        public UserMovie LikedMovie { get; set; }
-        public UserMovie ViewedMovie { get; set; }
-        public List<UserMovie> favorites { get; set; }
-        public List<UserMovie> viewed { get; set; }
+        public SearchContainer<SearchMovie> ApiList { get; set; } = new();
+        public UserMovie LikedMovie { get; set; } = new();
+        public UserMovie ViewedMovie { get; set; } = new();
+        public List<UserMovie> favorites { get; set; } = new();
+        public List<UserMovie> viewed { get; set; } = new();
         public string ImagePrefix { get; set; } = Endpoints.ImagePathPrefix;
 
-        public Movie Movie { get; set; }
+        public Movie Movie { get; set; } = new();
 
         #endregion Properties
         #region Methods
@@ -54,8 +55,8 @@ namespace TMDB_blazor.Pages
             string jsonViewed = File.ReadAllText("wwwroot/data/viewed.json");
             string jsonLiked = File.ReadAllText("wwwroot/data/favorite.json");
 
-            viewed = JsonSerializer.Deserialize<List<UserMovie>>(jsonViewed);
-            favorites = JsonSerializer.Deserialize<List<UserMovie>>(jsonLiked);
+            viewed = JsonSerializer.Deserialize<List<UserMovie>>(jsonViewed) ?? throw new NullReferenceException("viewd json is empty");
+            favorites = JsonSerializer.Deserialize<List<UserMovie>>(jsonLiked) ?? throw new NullReferenceException("favorites json is empty");
 
         }
 
@@ -78,7 +79,7 @@ namespace TMDB_blazor.Pages
                     OriginalLanguage = movie.OriginalLanguage,
                     OriginalTitle = movie.OriginalTitle,
                     Overview = movie.Overview,
-                    Popularity = movie.Popularity,
+                    Popularity = movie.Popularity ?? 0,
                     PosterPath = movie.PosterPath,
                     ReleaseDate = movie.ReleaseDate,
                     Title = movie.Title,
@@ -117,7 +118,7 @@ namespace TMDB_blazor.Pages
                     OriginalLanguage = movie.OriginalLanguage,
                     OriginalTitle = movie.OriginalTitle,
                     Overview = movie.Overview,
-                    Popularity = movie.Popularity,
+                    Popularity = movie.Popularity??0,
                     PosterPath = movie.PosterPath,
                     ReleaseDate = movie.ReleaseDate,
                     Title = movie.Title,
