@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace TMDB_blazor.Services
+﻿namespace TMDB_blazor.Services
 {
     public class TmdbExtension : ITmdbExtension
     {
@@ -27,31 +25,50 @@ namespace TMDB_blazor.Services
 
             // 3. Build display list: merge HTTP results with local viewed/liked status
             var result = new List<UserMovie>();
+            if (searchResult?.Results is not null)
+            {
             foreach (var item in searchResult.Results)
             {
-                string json = JsonSerializer.Serialize(item);
-                var um = JsonSerializer.Deserialize<UserMovie>(json)!;
+                var um = new UserMovie
+                {
+                    Id = item.Id,
+                    Adult = item.Adult,
+                    BackdropPath = item.BackdropPath,
+                    GenreIds = item.GenreIds,
+                    MediaType = item.MediaType,
+                    OriginalLanguage = item.OriginalLanguage,
+                    OriginalTitle = item.OriginalTitle,
+                    Overview = item.Overview,
+                    Popularity = item.Popularity,
+                    PosterPath = item.PosterPath,
+                    ReleaseDate = item.ReleaseDate,
+                    Title = item.Title,
+                    Video = item.Video,
+                    VoteAverage = item.VoteAverage,
+                    VoteCount = item.VoteCount,
+                };
 
                 // Mark local status
                 if (viewedIds.Contains(um.Id))
                 {
-                    var local = allViewed.First(v => v.Id == um.Id);
-                    um.Viewed = local.Viewed;
+                    var local = allViewed.FirstOrDefault(v => v.Id == um.Id);
+                    if (local is not null) um.Viewed = local.Viewed;
                 }
                 if (likedIds.Contains(um.Id))
                 {
-                    var local = allLiked.First(v => v.Id == um.Id);
-                    um.Favorite = local.Favorite;
+                    var local = allLiked.FirstOrDefault(v => v.Id == um.Id);
+                    if (local is not null) um.Favorite = local.Favorite;
                 }
 
                 result.Add(um);
             }
+            }
 
             // 4. Append local-only items (viewed/liked that match the search but aren't in HTTP results)
             var httpIds = new HashSet<int>(result.Select(x => x.Id));
-            foreach (var item in allViewed.Where(a => a.Title.ToUpper().Contains(upperWord) && !httpIds.Contains(a.Id)))
+            foreach (var item in allViewed.Where(a => a.Title?.ToUpper().Contains(upperWord) == true && !httpIds.Contains(a.Id)))
                 result.Add(item);
-            foreach (var item in allLiked.Where(a => a.Title.ToUpper().Contains(upperWord) && !httpIds.Contains(a.Id)))
+            foreach (var item in allLiked.Where(a => a.Title?.ToUpper().Contains(upperWord) == true && !httpIds.Contains(a.Id)))
             {
                 if (!result.Any(r => r.Id == item.Id))
                     result.Add(item);

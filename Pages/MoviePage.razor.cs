@@ -46,8 +46,9 @@ namespace TMDB_blazor.Pages
         {
             if (Identity > 0)
             {
-                Movie = await DataClient.GetMovieAsync(Identity);
-                MovieTrailerUrl = await GetMovieTrailerAsync(Movie.Id);
+                Movie = await DataClient.GetMovieAsync(Identity) ?? new Movie();
+                if (Movie.Id > 0)
+                    MovieTrailerUrl = await GetMovieTrailerAsync(Movie.Id);
             }
             viewed = await _json.ReadAllAsync(Endpoints.jsonViewedPath);
             favorites = await _json.ReadAllAsync(Endpoints.jsonLikedPath);
@@ -116,15 +117,15 @@ namespace TMDB_blazor.Pages
                 await InvokeAsync(StateHasChanged);
             }
         }
-        protected string GetCompletedPosterPath(string posterPath)
+        protected string GetCompletedPosterPath(string? posterPath)
         {
-            return ImagePrefix + posterPath;
+            return string.IsNullOrEmpty(posterPath) ? Endpoints.AlternativeImage : ImagePrefix + posterPath;
         }
 
         private async Task<string> GetMovieTrailerAsync(int id)
         {
-            var result = await DataClient.GetMovieVideosAsync(id);
-            var youtubeKey = result.Results.FirstOrDefault()?.Key ?? "";
+            var result = await DataClient.GetMovieVideosAsync(id) ?? new();
+            var youtubeKey = result.Results?.FirstOrDefault()?.Key ?? "";
             return $"https://www.youtube.com/embed/{youtubeKey}";
         }
         #endregion Methods

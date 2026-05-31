@@ -24,13 +24,13 @@
             <ItemTemplate Context="i">
                 <tr>
                     <td>
-                        <MudImage Src=@GetCompletedPosterPath(i.PosterPath) Width="90" Alt="movie poster" Elevation="25" Class="mx-auto rounded-lg ma-4" />
+                        <MudImage Src="@GetCompletedPosterPath(i.PosterPath)" Width="90" Alt="movie poster" Elevation="25" Class="mx-auto rounded-lg ma-4" />
                     </td>
                     <td>@i.Title</td>
                     <td>@i.OriginalTitle</td>
                     <td>@i.OriginalLanguage</td>
                     <td>@i.Popularity</td>
-                    <td>@(((DateTime)i.ReleaseDate).ToString("d"))</td>
+                    <td>@i.ReleaseDate?.ToString("d")</td>
                     <td>@i.VoteAverage</td>
                     <td>@i.VoteCount</td>
                     <td>@i.Overview</td>

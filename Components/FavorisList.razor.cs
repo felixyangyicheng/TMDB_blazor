@@ -15,7 +15,7 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// liste des préférés de json
         /// </summary>
-        public List<UserMovie> favorites { get; set; } = new List<UserMovie>();
+        public List<UserMovie> favorites { get; set; } = new();
         /// <summary>
         /// liste filtrée des préférés
         /// </summary>
@@ -39,9 +39,9 @@ namespace TMDB_blazor.Components
         /// </summary>
         /// <param name="posterPath"></param>
         /// <returns></returns>
-        protected string GetCompletedPosterPath(string posterPath)
+        protected string GetCompletedPosterPath(string? posterPath)
         {
-            return ImagePrefix + posterPath;
+            return string.IsNullOrEmpty(posterPath) ? ImagePrefix + "default" : ImagePrefix + posterPath;
         }
         /// <summary>
         /// Supprimer le film de la liste, puis ré-écrire la liste dans le fichier
@@ -62,9 +62,9 @@ namespace TMDB_blazor.Components
         /// <param name="el"></param>
         protected async Task SearchChanged(string el)
         {
-            FiltredFavorites = favorites.Where(a => (a.Title.ToUpper().Contains(el.ToUpper())
-                                            || a.OriginalTitle.ToUpper().Contains(el.ToUpper())
-                                            || ((DateTime)a.ReleaseDate).ToString("d").Contains(el)
+            FiltredFavorites = favorites.Where(a => (a.Title?.ToUpper().Contains(el.ToUpper()) == true
+                                            || a.OriginalTitle?.ToUpper().Contains(el.ToUpper()) == true
+                                            || a.ReleaseDate?.ToString("d").Contains(el) == true
                                             )).ToList();
             await InvokeAsync(StateHasChanged);
 

@@ -29,7 +29,7 @@ namespace TMDB_blazor.Pages
 
         public SearchContainer<SearchMovie> list { get; set; } =new();
 
-        public DiscoverMovie dm { get; set; } =default!;
+        public DiscoverMovie dm { get; set; } = default!;
         public List<UserMovie> favorites { get; set; } = new();
         public List<UserMovie> FiltredFavorites { get; set; } = new();
         public List<UserMovie> viewed { get; set; } = new();
@@ -57,9 +57,9 @@ namespace TMDB_blazor.Pages
         {
             //list = await DataClient.GetMoviePopularListAsync();
 
-            dm = DataClient.DiscoverMoviesAsync();
+            dm = DataClient.DiscoverMoviesAsync()!;
 
-            list = await dm.OrderBy(DiscoverMovieSortBy.Revenue).Query(1);
+            list = (await dm.OrderBy(DiscoverMovieSortBy.Revenue).Query(1))!;
 
             viewed = await _json.ReadAllAsync(Endpoints.jsonViewedPath);
             favorites = await _json.ReadAllAsync(Endpoints.jsonLikedPath);
@@ -175,18 +175,17 @@ namespace TMDB_blazor.Pages
         /// <param name="el"></param>
         protected void SearchChanged(string el)
         {
-            if (!string.IsNullOrEmpty(el)){
-
-            FiltredViewed = viewed.Where(a => (a.Title.ToUpper().Contains(el.ToUpper()) 
-                                            || a.OriginalTitle.ToUpper().Contains(el.ToUpper())
-                                            ||((DateTime)a.ReleaseDate).ToString("d").Contains(el)
-
-                                            )).ToList();
-            FiltredFavorites = favorites.Where(a => (a.Title.ToUpper().Contains(el.ToUpper()) 
-                                                    || a.OriginalTitle.ToUpper().Contains(el.ToUpper())
-                                                    ||((DateTime)a.ReleaseDate).ToString("d").Contains(el)
-                                                    )).ToList();
-            StateHasChanged();
+            if (!string.IsNullOrEmpty(el))
+            {
+                FiltredViewed = viewed.Where(a => a.Title?.ToUpper().Contains(el.ToUpper()) == true
+                                               || a.OriginalTitle?.ToUpper().Contains(el.ToUpper()) == true
+                                               || a.ReleaseDate?.ToString("d").Contains(el) == true
+                                          ).ToList();
+                FiltredFavorites = favorites.Where(a => a.Title?.ToUpper().Contains(el.ToUpper()) == true
+                                                     || a.OriginalTitle?.ToUpper().Contains(el.ToUpper()) == true
+                                                     || a.ReleaseDate?.ToString("d").Contains(el) == true
+                                                ).ToList();
+                StateHasChanged();
             }
         }
         /// <summary>

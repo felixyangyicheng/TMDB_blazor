@@ -57,12 +57,12 @@ namespace TMDB_blazor.Components
         /// header de table
         /// </summary>
         [Parameter]
-        public RenderFragment TableHeader { get; set; }
+        public RenderFragment? TableHeader { get; set; }
         /// <summary>
         /// footer de table
         /// </summary>
         [Parameter]
-        public RenderFragment TableFooter { get; set; }
+        public RenderFragment? TableFooter { get; set; }
 
         /// <summary>
         /// Capacité par page
@@ -80,7 +80,7 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// liste paginée
         /// </summary>
-        private List<T> CurrentDisplay;
+        private List<T> CurrentDisplay = new();
         /// <summary>
         /// total des items
         /// </summary>

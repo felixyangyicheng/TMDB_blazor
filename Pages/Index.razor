@@ -69,7 +69,7 @@
                                     @if (liked.ReleaseDate is not null)
                         {
                             
-                                    <td>@(((DateTime)liked.ReleaseDate).ToString("d"))</td>
+                                    <td>@liked.ReleaseDate?.ToString("d")</td>
                         }
                                     <td>@liked.VoteAverage</td>
                                     <td>@liked.VoteCount</td>
@@ -116,7 +116,7 @@
                                                                 @if (watch.ReleaseDate is not null)
                         {
                             
-                            <td>@(((DateTime)watch.ReleaseDate).ToString("d"))</td>
+                            <td>@watch.ReleaseDate?.ToString("d")</td>
                         }
                                 
 

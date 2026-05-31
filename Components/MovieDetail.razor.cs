@@ -7,14 +7,14 @@ namespace TMDB_blazor.Components
         /// <summary>
         ///  injection d'dépendence NavigationManager
         /// </summary>
-        [Inject] NavigationManager Nav { get; set; }
+        [Inject] NavigationManager Nav { get; set; } = default!;
         #region parameters
 
 
         /// <summary>
         /// Parametre:Item sélectionné
         /// </summary>
-        [Parameter] public SearchMovie SelectedItem { get; set; }
+        [Parameter] public SearchMovie? SelectedItem { get; set; }
 
         /// <summary>
         /// Parametre: notification:quand un film est sélectionné en tant que déjà vu
@@ -23,7 +23,7 @@ namespace TMDB_blazor.Components
         /// <summary>
         /// un film vu
         /// </summary>
-        [Parameter] public SearchMovie ViewedMovie { get; set; }
+        [Parameter] public SearchMovie? ViewedMovie { get; set; }
         /// <summary>
         /// Parametre: notification:quand un film est sélectionné en tant que préféré
         /// </summary>
@@ -32,7 +32,7 @@ namespace TMDB_blazor.Components
         /// un film préféré
         /// </summary>
 
-        [Parameter] public SearchMovie LikedMovie { get; set; }
+        [Parameter] public SearchMovie? LikedMovie { get; set; }
         #endregion parameters
         #region properties
         public int MyProperty { get; set; }
@@ -54,9 +54,9 @@ namespace TMDB_blazor.Components
         /// </summary>
         /// <param name="posterPath"></param>
         /// <returns></returns>
-        protected string? GetCompletedPosterPath(string posterPath)
+        protected string GetCompletedPosterPath(string? posterPath)
         {
-            return ImagePrefix + posterPath;
+            return string.IsNullOrEmpty(posterPath) ? AlternativeImage : ImagePrefix + posterPath;
         }
         /// <summary>
         /// Ajouter le film dans la liste des visionnés

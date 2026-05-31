@@ -2,19 +2,17 @@
 
 <table class="table table-dark">
     <thead>
-        @TableHeader
+        @if (TableHeader is not null) { @TableHeader }
     </thead>
     <tbody>
         @foreach (var i in CurrentDisplay)
         {
-            @ItemTemplate(i)
-
+            if (ItemTemplate is not null) { @ItemTemplate(i) }
         }
 
     </tbody>
     <tfoot>
-
-        @TableFooter
+        @if (TableFooter is not null) { @TableFooter }
 
         <tr>
       

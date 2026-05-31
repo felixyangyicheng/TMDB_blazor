@@ -81,10 +81,14 @@ namespace TMDB_blazor.Components
         /// <returns></returns>
         protected override async Task OnParametersSetAsync()
         {
-            SearchContainer = await DataClient.GetMoviePopularListAsync();
-            foreach (var i in SearchContainer.Results)
+            SearchContainer = await DataClient.GetMoviePopularListAsync() ?? new();
+            if (SearchContainer?.Results is not null)
             {
-                _source.Add(i.Title);
+                foreach (var i in SearchContainer.Results)
+                {
+                    if (i.Title is not null)
+                        _source.Add(i.Title);
+                }
             }
             await base.OnParametersSetAsync();
         }
@@ -93,9 +97,9 @@ namespace TMDB_blazor.Components
         /// </summary>
         /// <param name="posterPath"></param>
         /// <returns></returns>
-        protected string GetCompletedPosterPath(string posterPath)
+        protected string GetCompletedPosterPath(string? posterPath)
         {
-            return ImagePrefix + posterPath;
+            return string.IsNullOrEmpty(posterPath) ? AlternativeImage : ImagePrefix + posterPath;
         }
         /// <summary>
         /// sélectionné le film -> (attendre un callback dans un autre composant)
@@ -104,8 +108,11 @@ namespace TMDB_blazor.Components
         /// <returns></returns>
         protected async Task ClickMovie(int id)
         {
-            await OnSelectItem.InvokeAsync(SearchContainer.Results[id]);
-            StateHasChanged();
+            if (SearchContainer?.Results is not null && id < SearchContainer.Results.Count)
+            {
+                await OnSelectItem.InvokeAsync(SearchContainer.Results[id]);
+                StateHasChanged();
+            }
         }
 
     }

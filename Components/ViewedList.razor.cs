@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Text.Json;
 
 namespace TMDB_blazor.Components
 {
@@ -10,12 +9,16 @@ namespace TMDB_blazor.Components
         /// injection service Snackbar
         /// </summary>
         [Inject, NotNull] ISnackbar Snackbar { get; set; } = default!;
+        /// <summary>
+        /// injection du repository JSON
+        /// </summary>
+        [Inject, NotNull] IJsonFileRepository _json { get; set; } = default!;
         #endregion
         #region properties
         /// <summary>
         /// liste des films visionnés de json
         /// </summary>
-        public List<UserMovie> viewed { get; set; }= new List<UserMovie>();
+        public List<UserMovie> viewed { get; set; } = new List<UserMovie>();
         /// <summary>
         /// liste filtrée des films visionnés
         /// </summary>
@@ -30,8 +33,7 @@ namespace TMDB_blazor.Components
 
         protected override async Task OnInitializedAsync()
         {
-            string jsonViewed = File.ReadAllText("wwwroot/data/viewed.json");
-            viewed = JsonSerializer.Deserialize<List<UserMovie>>(jsonViewed)??throw new NullReferenceException("viewd json is empty");
+            viewed = await _json.ReadAllAsync(Endpoints.jsonViewedPath);
             FiltredViewed = viewed;
             await base.OnInitializedAsync();
         }
@@ -40,9 +42,9 @@ namespace TMDB_blazor.Components
         /// </summary>
         /// <param name="posterPath"></param>
         /// <returns></returns>
-        protected string GetCompletedPosterPath(string posterPath)
+        protected string GetCompletedPosterPath(string? posterPath)
         {
-            return ImagePrefix + posterPath;
+            return string.IsNullOrEmpty(posterPath) ? ImagePrefix + "default" : ImagePrefix + posterPath;
         }
         /// <summary>
         /// Supprimer le film de la liste, puis ré-écrire la liste dans le fichier json
@@ -53,8 +55,7 @@ namespace TMDB_blazor.Components
         {
             FiltredViewed.Remove(userMovie);
             viewed = FiltredViewed;
-            string json = JsonSerializer.Serialize(viewed);
-            File.WriteAllText("wwwroot/data/viewed.json", json);
+            await _json.SaveAsync(viewed, Endpoints.jsonViewedPath);
             Snackbar.Add("Movie from list sucessfully");
             await InvokeAsync(StateHasChanged);
         }
@@ -64,9 +65,9 @@ namespace TMDB_blazor.Components
         /// <param name="el"></param>
         protected async Task SearchChanged(string el)
         {
-            FiltredViewed = viewed.Where(a => (a.Title.ToUpper().Contains(el.ToUpper())
-                                            || a.OriginalTitle.ToUpper().Contains(el.ToUpper())
-                                            || ((DateTime)a.ReleaseDate).ToString("d").Contains(el)
+            FiltredViewed = viewed.Where(a => (a.Title?.ToUpper().Contains(el.ToUpper()) == true
+                                            || a.OriginalTitle?.ToUpper().Contains(el.ToUpper()) == true
+                                            || a.ReleaseDate?.ToString("d").Contains(el) == true
                                             )).ToList();
             await InvokeAsync(StateHasChanged);
       
