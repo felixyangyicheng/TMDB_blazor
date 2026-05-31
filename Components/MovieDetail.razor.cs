@@ -1,8 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using TMDB_blazor.Data;
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Movies;
-using TMDbLib.Objects.Search;
 
 namespace TMDB_blazor.Components
 {

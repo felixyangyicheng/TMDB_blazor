@@ -1,11 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
-using TMDB_blazor.Contracts;
-using TMDB_blazor.Data;
-using TMDB_blazor.Pages;
-using TMDbLib.Objects.Discover;
 
 namespace TMDB_blazor.Components
 {
@@ -37,7 +30,7 @@ namespace TMDB_blazor.Components
         /// <returns></returns>
         protected override async Task OnInitializedAsync()
         {
-            favorites = _json.ReadAll(Endpoints.jsonLikedPath);
+            favorites = await _json.ReadAllAsync(Endpoints.jsonLikedPath);
             FiltredFavorites = favorites;
             await base.OnInitializedAsync();
         }
@@ -57,18 +50,9 @@ namespace TMDB_blazor.Components
         /// <returns></returns>
         protected async Task RemoveFromList(UserMovie userMovie)
         {
-            string jsonliked = "[]";
             FiltredFavorites.Remove(userMovie);
             favorites = FiltredFavorites;
-            if (favorites.Count != 0)
-            {
-                jsonliked = JsonSerializer.Serialize(favorites);
-            }
-            if (favorites.Count==1)
-            {
-                jsonliked= "[" + jsonliked + "]";
-            }
-            File.WriteAllText("wwwroot/data/favorite.json", jsonliked);
+            await _json.SaveAsync(favorites, Endpoints.jsonLikedPath);
             Snackbar.Add("Movie from list sucessfully");
             await InvokeAsync(StateHasChanged);
         }

@@ -1,15 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
-using System.Text.RegularExpressions;
-using TMDB_blazor.Contracts;
-using TMDB_blazor.Data;
-using TMDbLib.Client;
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.Search;
-using static MudBlazor.CategoryTypes;
 
 namespace TMDB_blazor.Pages
 {
@@ -86,9 +76,9 @@ namespace TMDB_blazor.Pages
         {
             DisplayResult = new List<UserMovie>();         
             //liste des films visonnés
-            viewed = _json.ReadAll(Endpoints.jsonViewedPath);  
+            viewed = await _json.ReadAllAsync(Endpoints.jsonViewedPath);  
             //liste des films préférés
-            favorites = _json.ReadAll(Endpoints.jsonLikedPath); 
+            favorites = await _json.ReadAllAsync(Endpoints.jsonLikedPath); 
             //les éléments communs de liste des visionnés et celle des préférés
             List<UserMovie> commun  = (from a in viewed      
                                   join b in favorites on a.Id equals b.Id
@@ -154,22 +144,10 @@ namespace TMDB_blazor.Pages
 
         protected void OrderByReleaseDate()
         {
-
             DisplayResult = DisplayResult
-            .OrderBy(c=>c.VoteCount)
-            //.OrderBy(d=>d.ReleaseDate)
-            .ToList();
-            Console.WriteLine(DisplayResult.Count());
-            foreach (var item in DisplayResult)
-            {
-                Console.WriteLine(item.VoteCount);
-            }
+                .OrderByDescending(d => d.ReleaseDate)
+                .ToList();
             StateHasChanged();
-
-        }
-        protected void OrderByReleaseDateDesc()
-        {
-            DisplayResult.OrderByDescending(d=>d.ReleaseDate).ToList();
         }
         protected void Redirect(SearchMovie movie)
         {

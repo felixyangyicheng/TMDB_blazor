@@ -1,7 +1,4 @@
-﻿using TMDB_blazor.Data;
-using TMDbLib.Objects.Search;
-
-namespace TMDB_blazor.Contracts
+﻿namespace TMDB_blazor.Contracts
 {
     public interface ITmdbExtension
     {

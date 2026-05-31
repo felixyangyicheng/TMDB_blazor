@@ -1,17 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor;
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata.Ecma335;
-using System.Text.Json;
-using TMDB_blazor.Components;
-using TMDB_blazor.Contracts;
-using TMDB_blazor.Data;
-using TMDbLib.Client;
+﻿using TMDB_blazor.Components;
 using TMDbLib.Objects.Discover;
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Movies;
-using TMDbLib.Objects.Search;
 
 namespace TMDB_blazor.Pages
 {
@@ -73,8 +61,8 @@ namespace TMDB_blazor.Pages
 
             list = await dm.OrderBy(DiscoverMovieSortBy.Revenue).Query(1);
 
-            viewed=_json.ReadAll(Endpoints.jsonViewedPath);
-            favorites = _json.ReadAll(Endpoints.jsonLikedPath);
+            viewed = await _json.ReadAllAsync(Endpoints.jsonViewedPath);
+            favorites = await _json.ReadAllAsync(Endpoints.jsonLikedPath);
 
             FiltredFavorites = favorites;
             FiltredViewed = viewed;
@@ -94,7 +82,7 @@ namespace TMDB_blazor.Pages
         /// Ajouter le film dans la liste des visionnés, puis ré-écrire dans le fichier json
         /// </summary>
         /// <param name="movie"></param>
-        void AddViewed(SearchMovie movie)
+        protected async Task AddViewed(SearchMovie movie)
         {
             if (viewed.Any(a => a.Id == movie.Id))
             {
@@ -122,16 +110,16 @@ namespace TMDB_blazor.Pages
                     VoteCount = movie.VoteCount,
                 };
                 viewed.Add(ViewedMovie);
-                _json.Save(viewed, Endpoints.jsonViewedPath);
+                await _json.SaveAsync(viewed, Endpoints.jsonViewedPath);
                 Snackbar.Add("Movie added to list sucessfully");
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
         /// <summary>
         /// Ajouter le film dans la liste des préférés, puis ré-écrire dans le fichier json
         /// </summary>
         /// <param name="movie"></param>
-        void AddLiked(SearchMovie movie)
+        protected async Task AddLiked(SearchMovie movie)
         {
             if (favorites.Any(a => a.Id == movie.Id))
             {
@@ -159,9 +147,9 @@ namespace TMDB_blazor.Pages
                     VoteCount = movie.VoteCount,
                 };
                 favorites.Add(LikedMovie);
-                _json.Save(favorites, Endpoints.jsonLikedPath);
+                await _json.SaveAsync(favorites, Endpoints.jsonLikedPath);
                 Snackbar.Add("Movie added to list sucessfully");
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
         protected void ChangeVisibility()

@@ -1,7 +1,4 @@
-﻿using TMDbLib.Objects.Movies;
-using TMDbLib.Objects.Search;
-
-namespace TMDB_blazor.Data
+﻿namespace TMDB_blazor.Data
 {
     public class UserMovie:SearchMovie
     {

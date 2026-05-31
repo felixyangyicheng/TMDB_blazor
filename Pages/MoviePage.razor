@@ -222,7 +222,7 @@
                             </p>
                         
                             <iframe type="text/html" class="w-100"
-                                       style="max-width:800px;" src=@GetMovieTrailer(Movie.Id) frameborder="0"
+                                       style="max-width:800px;" src="@MovieTrailerUrl" frameborder="0"
                                 allowfullscreen></iframe>
                         </div>
                     </div>
@@ -245,7 +245,7 @@
                 else
                 {
 
-                    <MudButton Color="Color.Tertiary" @onclick="e=>AddViewed(Movie)"><MudIcon Icon="@Icons.Material.Rounded.RemoveRedEye"></MudIcon> Add to viewed list</MudButton>
+                    <MudButton Color="Color.Tertiary" @onclick="async e=> await AddViewed(Movie)"><MudIcon Icon="@Icons.Material.Rounded.RemoveRedEye"></MudIcon> Add to viewed list</MudButton>
                 }
                 @if (favorites.Any(a => a.Id == Movie.Id))
                 {
@@ -254,7 +254,7 @@
                 }
                 else
                 {
-                    <MudButton Color="Color.Tertiary" @onclick="e=>AddLiked(Movie)"><MudIcon Icon="@Icons.Material.Rounded.Favorite"></MudIcon> Add to favorite list</MudButton>
+                    <MudButton Color="Color.Tertiary" @onclick="async e=> await AddLiked(Movie)"><MudIcon Icon="@Icons.Material.Rounded.Favorite"></MudIcon> Add to favorite list</MudButton>
 
                 }
 

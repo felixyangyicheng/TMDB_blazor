@@ -1,11 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
-using TMDB_blazor.Components;
-using TMDB_blazor.Contracts;
-using TMDB_blazor.Data;
-using TMDbLib.Client;
-using TMDbLib.Objects.Search;
-using TMDbLib.Utilities.Serializer;
+﻿using System.Text.Json;
 
 namespace TMDB_blazor.Services
 {
@@ -19,114 +12,61 @@ namespace TMDB_blazor.Services
             DataClient = dataClient;
         }
 
-        public async Task<List<UserMovie>> SearcheWithLocalFilter(string searchWord, bool? viewed, bool? liked, bool adult)
+        public async Task<List<UserMovie>> SearcheWithLocalFilter(string searchWord, bool? viewedFilter, bool? likedFilter, bool adult)
         {
-            List<UserMovie> DisplayResult = new List<UserMovie>();
-            List<UserMovie> HttpResult = new List<UserMovie>();
-            List<UserMovie> ViewedResult = new List<UserMovie>();
-            List<UserMovie> LikedResult = new List<UserMovie>();
-            var SearchResult = await DataClient.SearchMovieAsync(searchWord, 1, adult);
+            // 1. Search TMDB API — first page only (pagination adds latency for minimal UI gain)
+            var searchResult = await DataClient.SearchMovieAsync(searchWord, 1, adult);
+            var upperWord = searchWord.ToUpper();
 
-            for (int i = 0; i < SearchResult.TotalPages; i++)
+            // 2. Load local lists (async + cached via repository)
+            var allViewed = await _jsonFileRepository.ReadAllAsync(Endpoints.jsonViewedPath);
+            var allLiked = await _jsonFileRepository.ReadAllAsync(Endpoints.jsonLikedPath);
+
+            var viewedIds = new HashSet<int>(allViewed.Select(x => x.Id));
+            var likedIds = new HashSet<int>(allLiked.Select(x => x.Id));
+
+            // 3. Build display list: merge HTTP results with local viewed/liked status
+            var result = new List<UserMovie>();
+            foreach (var item in searchResult.Results)
             {
-                var tmp =
-                DataClient.SearchMovieAsync(searchWord, i, adult).Result;
-                foreach (var item in SearchResult.Results)
+                string json = JsonSerializer.Serialize(item);
+                var um = JsonSerializer.Deserialize<UserMovie>(json)!;
+
+                // Mark local status
+                if (viewedIds.Contains(um.Id))
                 {
-                    var jsonsm = JsonSerializer.Serialize(item);
-                    UserMovie um = JsonSerializer.Deserialize<UserMovie>(jsonsm);
-                    HttpResult.Add(um);
+                    var local = allViewed.First(v => v.Id == um.Id);
+                    um.Viewed = local.Viewed;
+                }
+                if (likedIds.Contains(um.Id))
+                {
+                    var local = allLiked.First(v => v.Id == um.Id);
+                    um.Favorite = local.Favorite;
                 }
 
+                result.Add(um);
             }
 
- 
-                ViewedResult = _jsonFileRepository.ReadAll(Endpoints.jsonViewedPath)
-                    .Where(a => a.Title.ToUpper().Contains(searchWord.ToUpper())).ToList();
-         
-            
-                LikedResult = _jsonFileRepository.ReadAll(Endpoints.jsonLikedPath)
-                    .Where(a => a.Title.ToUpper().Contains(searchWord.ToUpper())).ToList();
-            
-
-            List<UserMovie> commun = (from a in ViewedResult  //éléments commun dans viewed et liked
-                                      join b in LikedResult on a.Id equals b.Id
-                                      //join c in HttpResult on b.Id equals c.Id
-                                      select new UserMovie
-                                      {
-                                          Id = a.Id,
-                                          Adult = a.Adult,
-                                          BackdropPath = a.BackdropPath,
-                                          Favorite = b.Favorite,
-                                          GenreIds = a.GenreIds,
-                                          MediaType = a.MediaType,
-                                          OriginalLanguage = a.OriginalLanguage,
-                                          OriginalTitle = a.OriginalTitle,
-                                          Overview = a.Overview,
-                                          Popularity = a.Popularity,
-                                          PosterPath = a.PosterPath,
-                                          ReleaseDate = a.ReleaseDate,
-                                          Title = a.Title,
-                                          Video = a.Video,
-                                          Viewed = a.Viewed,
-                                          VoteAverage = a.VoteAverage,
-                                          VoteCount = a.VoteCount
-                                      }).ToList();
-
-            List<UserMovie> q1 = ViewedResult.Where(a => !commun.Select(b => b.Id).Contains(a.Id)).ToList(); //éléments uniquement dans viewed
-            List<UserMovie> q2 = LikedResult.Where(a => !commun.Select(b => b.Id).Contains(a.Id)).ToList();         //élement uniquement dans liked
-            DisplayResult.AddRange(q1);
-            DisplayResult.AddRange(q2);
-            DisplayResult.AddRange(commun);
-
-
-            var ViewedMovieIDList = ViewedResult.Select(c => c.Id).ToList();
-            var LikedMovieIDList = ViewedResult.Select(c => c.Id).ToList();
-            List<UserMovie> httpUnviewed = HttpResult.Where(f => !ViewedMovieIDList.Contains(f.Id)).ToList();
-            List<UserMovie> httpUnliked = HttpResult.Where(f => !LikedMovieIDList.Contains(f.Id)).ToList();
-
-
-            List<UserMovie> HttpCommun = (from a in httpUnviewed  //éléments commun dans viewed et liked
-                                          join b in httpUnliked on a.Id equals b.Id
-                                          //join c in HttpResult on b.Id equals c.Id
-                                          select new UserMovie
-                                          {
-                                              Id = a.Id,
-                                              Adult = a.Adult,
-                                              BackdropPath = a.BackdropPath,
-                                              Favorite = b.Favorite,
-                                              GenreIds = a.GenreIds,
-                                              MediaType = a.MediaType,
-                                              OriginalLanguage = a.OriginalLanguage,
-                                              OriginalTitle = a.OriginalTitle,
-                                              Overview = a.Overview,
-                                              Popularity = a.Popularity,
-                                              PosterPath = a.PosterPath,
-                                              ReleaseDate = a.ReleaseDate,
-                                              Title = a.Title,
-                                              Video = a.Video,
-                                              Viewed = a.Viewed,
-                                              VoteAverage = a.VoteAverage,
-                                              VoteCount = a.VoteCount
-                                          }).ToList();
-
-            if (viewed==false)
+            // 4. Append local-only items (viewed/liked that match the search but aren't in HTTP results)
+            var httpIds = new HashSet<int>(result.Select(x => x.Id));
+            foreach (var item in allViewed.Where(a => a.Title.ToUpper().Contains(upperWord) && !httpIds.Contains(a.Id)))
+                result.Add(item);
+            foreach (var item in allLiked.Where(a => a.Title.ToUpper().Contains(upperWord) && !httpIds.Contains(a.Id)))
             {
-                DisplayResult.RemoveAll(a=> ViewedResult.Select(b=>a.Id).Contains(a.Id));
-            DisplayResult.AddRange(HttpCommun);
+                if (!result.Any(r => r.Id == item.Id))
+                    result.Add(item);
             }
-            else if (liked==false)
-            {
-                DisplayResult.RemoveAll(a => LikedResult.Select(b => a.Id).Contains(a.Id));
 
-                DisplayResult.AddRange(HttpCommun);
-            }
-            else
-            {
-            DisplayResult.AddRange(HttpCommun);
+            // 5. Apply filters
+            if (viewedFilter == false)
+                result.RemoveAll(r => r.Viewed == true);
+            if (likedFilter == false)
+                result.RemoveAll(r => r.Favorite == true);
 
-            }
-            return DisplayResult;
+            // Sort by popularity (most relevant first)
+            result = result.OrderByDescending(r => r.Popularity).ToList();
+
+            return result;
         }
     }
 }

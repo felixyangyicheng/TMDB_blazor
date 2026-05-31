@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-using TMDB_blazor.Data;
 
 namespace TMDB_blazor.Components
 {
@@ -54,18 +51,10 @@ namespace TMDB_blazor.Components
         /// <returns></returns>
         protected async Task RemoveFromList(UserMovie userMovie)
         {
-            string jsonViewed ="[]";
             FiltredViewed.Remove(userMovie);
-            viewed=FiltredViewed;
-            if (viewed.Count!=0)
-            {        
-                jsonViewed=JsonSerializer.Serialize(viewed);
-            }
-            if (viewed.Count == 1)
-            {
-                jsonViewed = "[" + jsonViewed + "]";
-            }
-            File.WriteAllText("wwwroot/data/viewed.json", jsonViewed);
+            viewed = FiltredViewed;
+            string json = JsonSerializer.Serialize(viewed);
+            File.WriteAllText("wwwroot/data/viewed.json", json);
             Snackbar.Add("Movie from list sucessfully");
             await InvokeAsync(StateHasChanged);
         }

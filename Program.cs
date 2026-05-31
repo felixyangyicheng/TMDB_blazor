@@ -1,9 +1,5 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
-using TMDB_blazor.Contracts;
 using TMDB_blazor.Services;
-using TMDbLib.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 

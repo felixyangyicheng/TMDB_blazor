@@ -5,7 +5,7 @@
 		<ItemTemplate>
 			<div class="d-flex flex-column flex-column justify-center" style="height:120%">
 				<MudImage Src=@GetCompletedPosterPath(SearchContainer.Results[selectedIndex].PosterPath) Width="130" Alt=@AlternativeImage Elevation="25" Class="mx-auto rounded-lg ma-4" />
-				<MudButton Variant="Variant.Text" DisableElevation="true" Color="Color.Secondary" @onclick=" e=>ClickMovie(selectedIndex)">@context</MudButton>
+				<MudButton Variant="Variant.Text" Color="Color.Secondary" @onclick=" e=>ClickMovie(selectedIndex)">@context</MudButton>
 			</div>
 		</ItemTemplate>
 	</MudCarousel>

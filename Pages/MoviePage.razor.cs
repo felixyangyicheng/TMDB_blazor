@@ -1,11 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Principal;
-using System.Text.Json;
-using TMDB_blazor.Data;
-using TMDbLib.Client;
-using TMDbLib.Objects.General;
 using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.Search;
 
@@ -22,6 +15,10 @@ namespace TMDB_blazor.Pages
         ///  injection d'dépendence TMDBClient
         /// </summary>
         [Inject, NotNull] TMDbClient DataClient { get; set; } = default!;
+        /// <summary>
+        /// injection du repository JSON
+        /// </summary>
+        [Inject, NotNull] IJsonFileRepository _json { get; set; } = default!;
         #endregion Injection
 
         #region Parameters
@@ -39,6 +36,7 @@ namespace TMDB_blazor.Pages
         public string ImagePrefix { get; set; } = Endpoints.ImagePathPrefix;
 
         public Movie Movie { get; set; } = new();
+        public string MovieTrailerUrl { get; set; } = "";
 
         #endregion Properties
         #region Methods
@@ -48,19 +46,14 @@ namespace TMDB_blazor.Pages
         {
             if (Identity > 0)
             {
-                //Lorsque l'identifiant est défini, on appel en async l'API pour récupérer le film correspondant.
                 Movie = await DataClient.GetMovieAsync(Identity);
-                
+                MovieTrailerUrl = await GetMovieTrailerAsync(Movie.Id);
             }
-            string jsonViewed = File.ReadAllText("wwwroot/data/viewed.json");
-            string jsonLiked = File.ReadAllText("wwwroot/data/favorite.json");
-
-            viewed = JsonSerializer.Deserialize<List<UserMovie>>(jsonViewed) ?? throw new NullReferenceException("viewd json is empty");
-            favorites = JsonSerializer.Deserialize<List<UserMovie>>(jsonLiked) ?? throw new NullReferenceException("favorites json is empty");
-
+            viewed = await _json.ReadAllAsync(Endpoints.jsonViewedPath);
+            favorites = await _json.ReadAllAsync(Endpoints.jsonLikedPath);
         }
 
-        void AddViewed(Movie movie)
+        protected async Task AddViewed(Movie movie)
         {
             if (viewed.Any(a => a.Id == movie.Id))
             {
@@ -73,9 +66,7 @@ namespace TMDB_blazor.Pages
                     Viewed = true,
                     Adult = movie.Adult,
                     BackdropPath = movie.BackdropPath,
-                    
                     Id = movie.Id,
-           
                     OriginalLanguage = movie.OriginalLanguage,
                     OriginalTitle = movie.OriginalTitle,
                     Overview = movie.Overview,
@@ -88,19 +79,13 @@ namespace TMDB_blazor.Pages
                     VoteCount = movie.VoteCount,
                 };
                 viewed.Add(ViewedMovie);
-                string content = JsonSerializer.Serialize(viewed);
-
-                if (viewed.Count == 1)
-                {
-                    content = "[" + content + "]";
-                }
-                File.WriteAllText("wwwroot/data/viewed.json", content);
+                await _json.SaveAsync(viewed, Endpoints.jsonViewedPath);
                 Snackbar.Add("Movie added to list sucessfully");
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
-        void AddLiked(Movie movie)
+        protected async Task AddLiked(Movie movie)
         {
             if (favorites.Any(a => a.Id == movie.Id))
             {
@@ -113,12 +98,11 @@ namespace TMDB_blazor.Pages
                     Favorite = true,
                     Adult = movie.Adult,
                     BackdropPath = movie.BackdropPath,
-     
                     Id = movie.Id,
                     OriginalLanguage = movie.OriginalLanguage,
                     OriginalTitle = movie.OriginalTitle,
                     Overview = movie.Overview,
-                    Popularity = movie.Popularity??0,
+                    Popularity = movie.Popularity ?? 0,
                     PosterPath = movie.PosterPath,
                     ReleaseDate = movie.ReleaseDate,
                     Title = movie.Title,
@@ -127,27 +111,20 @@ namespace TMDB_blazor.Pages
                     VoteCount = movie.VoteCount,
                 };
                 favorites.Add(LikedMovie);
-                string content = JsonSerializer.Serialize(favorites);
-                if (favorites.Count == 1)
-                {
-                    content = "[" + content + "]";
-                }
-                File.WriteAllText("wwwroot/data/favorite.json", content);
+                await _json.SaveAsync(favorites, Endpoints.jsonLikedPath);
                 Snackbar.Add("Movie added to list sucessfully");
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
-
         }
         protected string GetCompletedPosterPath(string posterPath)
         {
             return ImagePrefix + posterPath;
         }
 
-        protected  string GetMovieTrailer(int id)
+        private async Task<string> GetMovieTrailerAsync(int id)
         {
-            var result = DataClient.GetMovieVideosAsync(id).Result;
-            var youtubeKey=result.Results.First().Key;
-
+            var result = await DataClient.GetMovieVideosAsync(id);
+            var youtubeKey = result.Results.FirstOrDefault()?.Key ?? "";
             return $"https://www.youtube.com/embed/{youtubeKey}";
         }
         #endregion Methods

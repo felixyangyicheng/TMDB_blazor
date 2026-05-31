@@ -5,11 +5,11 @@
 @page "/search"
 <MudContainer>
     From local favorite?
-    <MudToggleIconButton Icon="@Icons.Material.Filled.Check" Color="@Color.Error" Title="Off" ToggledChanged="e=>ChangeSearchLikedCondition()"
-                         ToggledIcon="@Icons.Material.Filled.Block" ToggledColor="@Color.Success" ToggledTitle="On" />
+    <MudToggleIconButton Icon="@Icons.Material.Filled.Check" Color="@Color.Error" ToggledChanged="e=>ChangeSearchLikedCondition()"
+                         ToggledIcon="@Icons.Material.Filled.Block" ToggledColor="@Color.Success" />
     From local viewed?
-    <MudToggleIconButton Icon="@Icons.Material.Filled.Check" Color="@Color.Error" Title="Off" ToggledChanged="e=>ChangeSearchViewedCondition()"
-                         ToggledIcon="@Icons.Material.Filled.Block" ToggledColor="@Color.Success" ToggledTitle="On" />
+    <MudToggleIconButton Icon="@Icons.Material.Filled.Check" Color="@Color.Error" ToggledChanged="e=>ChangeSearchViewedCondition()"
+                         ToggledIcon="@Icons.Material.Filled.Block" ToggledColor="@Color.Success" />
 
 
     @if (SearchAdultEnable)
@@ -26,8 +26,8 @@
         </span>
     }
     <MudToggleIconButton @bind-Toggled="@SearchAdultEnable"
-                         Icon="@Icons.Material.Filled.ChildCare" Color="@Color.Success" Title="Off"
-                         ToggledIcon="@Icons.Material.Filled.Warning" ToggledColor="@Color.Error" ToggledTitle="On" />
+                         Icon="@Icons.Material.Filled.ChildCare" Color="@Color.Success"
+                         ToggledIcon="@Icons.Material.Filled.Warning" ToggledColor="@Color.Error" />
     <MudButton Color="Color.Primary"  @onclick="e=>OrderByReleaseDate()">Sort by date</MudButton>
     <SearchBarItem OnSearchChanged="InputChanged"></SearchBarItem>
     @if (DisplayResult != null)
