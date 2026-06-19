@@ -1,6 +1,6 @@
 ﻿@typeparam T
 
-<table class="table table-dark">
+<table class="modern-table" style="margin:0;width:100%;">
     <thead>
         @if (TableHeader is not null) { @TableHeader }
     </thead>
@@ -9,66 +9,41 @@
         {
             if (ItemTemplate is not null) { @ItemTemplate(i) }
         }
-
     </tbody>
     <tfoot>
         @if (TableFooter is not null) { @TableFooter }
 
-        <tr>
-      
-            @if (TotalPages() > 1)
-            {
+        @if (TotalPages() > 1)
+        {
+            <tr>
+                <td colspan="100" style="padding:12px 0;text-align:center;border-top:1px solid #1E293B;">
+                    <div style="display:flex;justify-content:center;align-items:center;gap:2px;">
+                        <MudIconButton Icon="@Icons.Material.Rounded.FirstPage"
+                                       Size="Size.Small" Color="Color.Inherit"
+                                       Disabled="CurrentPage == 1"
+                                       OnClick="@MoveFirst" />
+                        <MudIconButton Icon="@Icons.Material.Rounded.ChevronLeft"
+                                       Size="Size.Small" Color="Color.Inherit"
+                                       Disabled="CurrentPage == 1"
+                                       OnClick="@MoveBack" />
 
-                if (CurrentPage == 1)
-                {
-                    <td>
+                        <span style="display:inline-flex;align-items:center;gap:6px;background:#0F172A;border:1px solid #1E293B;border-radius:8px;padding:4px 14px;font-size:0.8rem;color:#CBD5E1;margin:0 4px;">
+                            <span style="color:#14B8A6;font-weight:600;">@CurrentPage</span>
+                            <span style="color:#64748B;">/</span>
+                            <span style="color:#94A3B8;">@TotalPages()</span>
+                        </span>
 
-                        <MudButton disabled Color="Color.Primary" Size="Size.Large">Begin</MudButton>
-                    </td>
-                    <td>
-                        <MudButton disabled Color="Color.Primary" Size="Size.Large">Last</MudButton>
-                    </td>
-
-                }
-                else
-                {
-                    <td>
-                        <MudButton @onclick="@MoveFirst" title="Move First" Color="Color.Primary" Size="Size.Large">Begin</MudButton>
-                    </td>
-                    <td>
-
-                        <MudButton @onclick="@MoveBack" title="Move Back" Color="Color.Primary" Size="Size.Large">Last</MudButton>
-                    </td>
-                }
-                <td>
-
-                    <span>@CurrentPage of @TotalPages() </span>
+                        <MudIconButton Icon="@Icons.Material.Rounded.ChevronRight"
+                                       Size="Size.Small" Color="Color.Inherit"
+                                       Disabled="@AtLastPage()"
+                                       OnClick="@MoveNext" />
+                        <MudIconButton Icon="@Icons.Material.Rounded.LastPage"
+                                       Size="Size.Small" Color="Color.Inherit"
+                                       Disabled="@AtLastPage()"
+                                       OnClick="@MoveLast" />
+                    </div>
                 </td>
-                @if (!AtLastPage())
-                {
-                    <td>
-
-                        <MudButton @onclick="@MoveNext" title="Move Next" Color="Color.Primary" Size="Size.Large">Next</MudButton>
-                    </td>
-                    <td>
-
-                        <MudButton @onclick="@MoveLast" title="Move Last" Color="Color.Primary" Size="Size.Large">End</MudButton>
-                    </td>
-                }
-                else
-                {
-                    <td>
-
-                        <MudButton disabled Color="Color.Primary" Size="Size.Large">Next</MudButton>
-                    </td>
-                    <td>
-
-                        <MudButton disabled Color="Color.Primary" Size="Size.Large">End</MudButton>
-                    </td>
-                }
-
-            }
-        
-        </tr>
+            </tr>
+        }
     </tfoot>
 </table>

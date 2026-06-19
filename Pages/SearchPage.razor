@@ -1,139 +1,119 @@
-﻿@using TMDB_blazor.Components
+﻿@page "/search"
+@using TMDB_blazor.Components
 @using TMDB_blazor.Data
 @using TMDbLib.Objects.Movies
 @using TMDbLib.Objects.Search
-@page "/search"
-<MudContainer>
-    From local favorite?
-    <MudToggleIconButton Icon="@Icons.Material.Filled.Check" Color="@Color.Error" ToggledChanged="e=>ChangeSearchLikedCondition()"
-                         ToggledIcon="@Icons.Material.Filled.Block" ToggledColor="@Color.Success" />
-    From local viewed?
-    <MudToggleIconButton Icon="@Icons.Material.Filled.Check" Color="@Color.Error" ToggledChanged="e=>ChangeSearchViewedCondition()"
-                         ToggledIcon="@Icons.Material.Filled.Block" ToggledColor="@Color.Success" />
 
+<MudContainer Class="my-4 animate-in">
 
-    @if (SearchAdultEnable)
-    {
-        <span>
-            +18 Content
-        </span>
-    }
-    else
-    {
-        <span>
-            Children friendly
+    @* Search header card *@
+    <MudPaper Elevation="0" Class="pa-4 mb-4" Style="background:#111827;border:1px solid #1E293B;border-radius:10px;">
+        <h5 style="color:#F1F5F9;font-weight:600;margin-bottom:12px;">Search Movies</h5>
 
-        </span>
-    }
-    <MudToggleIconButton @bind-Toggled="@SearchAdultEnable"
-                         Icon="@Icons.Material.Filled.ChildCare" Color="@Color.Success"
-                         ToggledIcon="@Icons.Material.Filled.Warning" ToggledColor="@Color.Error" />
-    <MudButton Color="Color.Primary"  @onclick="e=>OrderByReleaseDate()">Sort by date</MudButton>
-    <SearchBarItem OnSearchChanged="InputChanged"></SearchBarItem>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="color:#64748B;font-size:0.8rem;">Filters:</span>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
+                       OnClick="e=>ChangeSearchLikedCondition()"
+                       StartIcon="@Icons.Material.Rounded.Favorite">
+                Favorites @(SearchLikedEnable ? "ON" : "OFF")
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
+                       OnClick="e=>ChangeSearchViewedCondition()"
+                       StartIcon="@Icons.Material.Rounded.RemoveRedEye">
+                Viewed @(SearchViewedEnable ? "ON" : "OFF")
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
+                       OnClick="e=>{SearchAdultEnable = !SearchAdultEnable; InvokeAsync(StateHasChanged);}"
+                       StartIcon="@Icons.Material.Rounded.SafetyDivider">
+                @(SearchAdultEnable ? "Adult OK" : "Children Only")
+            </MudButton>
+        </div>
+
+        <div class="divider-gradient"></div>
+
+        <SearchBarItem OnSearchChanged="InputChanged"></SearchBarItem>
+
+        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small"
+                   OnClick="e=>OrderByReleaseDate()" StartIcon="@Icons.Material.Rounded.SwapVert">
+            Sort by Date
+        </MudButton>
+    </MudPaper>
+
+    @* Results *@
     @if (DisplayResult != null)
     {
         if (loading)
         {
-          <p>
-
-          Loading...
-          </p>
-            <Fold Color="rgba(245, 174, 39, 0.87)" />
+            <div style="text-align:center;padding:40px;">
+                <Fold Color="#14B8A6" />
+                <p style="color:#94A3B8;margin-top:12px;">Searching...</p>
+            </div>
+        }
+        else if (DisplayResult.Any())
+        {
+            <MudPaper Elevation="0" Class="pa-4" Style="background:#111827;border:1px solid #1E293B;border-radius:10px;">
+                <h5 style="color:#F1F5F9;font-weight:600;margin-bottom:8px;">
+                    Results <span style="color:#64748B;font-weight:400;">(@DisplayResult.Count)</span>
+                </h5>
+                <div class="divider-gradient"></div>
+                <GenericList T="UserMovie" Items="DisplayResult" ItemsPerPage="10">
+                    <TableHeader>
+                        <tr>
+                            <th>Title</th>
+                            <th>Release</th>
+                            <th>Rating</th>
+                            <th>Viewed</th>
+                            <th>Liked</th>
+                            <th></th>
+                        </tr>
+                    </TableHeader>
+                    <ItemTemplate Context="r">
+                        <tr>
+                            <td>
+                                <span style="font-weight:600;">@r.Title</span>
+                                @if (r.ReleaseDate is not null)
+                                {
+                                    <span style="color:#64748B;font-size:0.75rem;display:block;">@r.OriginalTitle</span>
+                                }
+                            </td>
+                            <td>@r.ReleaseDate?.ToString("d")</td>
+                            <td>
+                                <span style="color:#F1F5F9;font-weight:600;">⭐ @r.VoteAverage.ToString("0.0")</span>
+                            </td>
+                            <td>
+                                @if (r.Viewed == true)
+                                {
+                                    <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" />
+                                }
+                                else
+                                {
+                                    <MudIcon Color="Color.Default" Icon="@Icons.Material.Filled.RadioButtonUnchecked" Size="Size.Small" />
+                                }
+                            </td>
+                            <td>
+                                @if (r.Favorite == true)
+                                {
+                                    <MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                                }
+                                else
+                                {
+                                    <MudIcon Color="Color.Default" Icon="@Icons.Material.Filled.StarBorder" Size="Size.Small" />
+                                }
+                            </td>
+                            <td>
+                                <MudIconButton Icon="@Icons.Material.Rounded.OpenInNew"
+                                               Color="Color.Primary" Size="Size.Small"
+                                               OnClick="e=>Redirect(r)" />
+                            </td>
+                        </tr>
+                    </ItemTemplate>
+                    <TableFooter></TableFooter>
+                </GenericList>
+            </MudPaper>
         }
         else
         {
-
-            <GenericList T="UserMovie" Items="DisplayResult" ItemsPerPage="10">
-                <TableHeader>
-                    <tr>Results</tr>
-                    <tr>
-                        <th>Title</th>
-                        <th>Release Date</th>
-                        <th>Vote Average</th>
-                        <th>Vote Count</th>
-                        <th>Viewed?</th>
-                        <th>Liked?</th>
-                        <th>+18 Content?</th>
-                        <th></th>
-                    </tr>
-                </TableHeader>
-                <ItemTemplate Context="r">
-                    <tr>
-                        <td>@r.Title</td>
-                        <td>
-                            @if (r.ReleaseDate == null)
-                            {
-                                <p> Unknown</p>
-
-                            }
-                            else
-                            {
-                                @r.ReleaseDate?.ToString("d")
-
-                            }
-                        </td>
-                        <td>@r.VoteAverage</td>
-                        <td>@r.VoteCount</td>
-
-                        <td>
-                            @if (r.Viewed == null)
-                            {
-                                <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.Help"></MudIcon>
-
-
-                            }
-                            else if (r.Viewed == true)
-                            {
-
-                                <MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.CheckCircle"></MudIcon>
-
-                            }
-                            else
-                            {
-                                <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.RemoveRedEye"></MudIcon>
-
-                            }
-                        </td>
-                        <td>
-                            @if (r.Favorite == null)
-                            {
-                                <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.StarBorder"></MudIcon>
-
-
-                            }
-                            else if (r.Favorite == true)
-                            {
-                                <MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.Star"></MudIcon>
-
-                            }
-                            else
-                            {
-                                <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.StarBorder"></MudIcon>
-
-
-                            }
-                        </td>
-                        <td>
-                            @if (r.Adult == true)
-                            {
-                                <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
-                            }
-                            else
-                            {
-                                <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
-                            }
-                        </td>
-                        <td>
-
-                            <MudIconButton Icon="@Icons.Material.Rounded.Web" Color="Color.Warning" @onclick="e=>Redirect(r)"></MudIconButton>
-                        </td>
-
-                    </tr>
-                </ItemTemplate>
-                <TableFooter></TableFooter>
-
-            </GenericList>
+            <p style="text-align:center;color:#64748B;padding:40px;">No results yet. Start searching!</p>
         }
     }
-
 </MudContainer>

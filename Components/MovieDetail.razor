@@ -1,75 +1,46 @@
-﻿<div class="row">
-    <div class="col">
-        <h3>Detail</h3>
-        <hr />
-        <table class="table table-dark table-hover">
-            <thead></thead>
-            <tbody>
-                <tr>
-                    <td>
-                        Id
-                    </td>
-                    <td>
-                        @SelectedItem?.Id
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Title
-                    </td>
-                    <td>
-                        @SelectedItem?.Title
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Original Language
-                    </td>
-                    <td>
-                        @SelectedItem?.OriginalLanguage
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Average
-                    </td>
-                    <td>
-                        @SelectedItem?.VoteAverage
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Popularity
-                    </td>
-                    <td>
-                        @SelectedItem?.Popularity
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        +18 content?
-                    </td>
-                    <td>
-                        @(SelectedItem?.Adult ==true?"Yes":"No")
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+﻿<div style="background:#0F172A;border:1px solid #1E293B;border-radius:10px;padding:20px;">
+    <h5 style="color:#F1F5F9;font-weight:600;margin-bottom:4px;">@SelectedItem?.Title</h5>
+    @if (SelectedItem?.ReleaseDate is not null)
+    {
+        <span style="color:#64748B;font-size:0.8rem;">@SelectedItem!.ReleaseDate.Value.ToString("d")</span>
+    }
+    <div class="divider-gradient"></div>
+
+    <MudGrid Spacing="1" Justify="Justify.FlexStart" Style="font-size:0.82rem;">
+        <MudItem xs="6">
+            <span style="color:#64748B;">Rating</span><br/>
+            <span style="color:#F1F5F9;font-weight:600;">⭐ @(SelectedItem?.VoteAverage.ToString("0.0"))</span>
+        </MudItem>
+        <MudItem xs="6">
+            <span style="color:#64748B;">Votes</span><br/>
+            <span style="color:#F1F5F9;">@(SelectedItem?.VoteCount.ToString("N0"))</span>
+        </MudItem>
+        <MudItem xs="6">
+            <span style="color:#64748B;">Popularity</span><br/>
+            <span style="color:#F1F5F9;">@(SelectedItem?.Popularity.ToString("N0"))</span>
+        </MudItem>
+        <MudItem xs="6">
+            <span style="color:#64748B;">Language</span><br/>
+            <span style="color:#F1F5F9;">@SelectedItem?.OriginalLanguage?.ToUpper()</span>
+        </MudItem>
+    </MudGrid>
+
+    <div style="margin-top:12px;">
+        <p style="color:#94A3B8;font-size:0.82rem;line-height:1.6;max-height:100px;overflow-y:auto;">
+            @SelectedItem?.Overview
+        </p>
     </div>
-    <div class="col">
-        <div class="form-group bg-black text-light">
-            <h3>
-                Summary:
-            </h3>
-            <p>
-                @SelectedItem?.Overview
-            </p>
-        </div>
-        @if (SelectedItem != null)
-        {
-            <MudButton Size="Size.Small" Color="Color.Tertiary" @onclick="e=>AddToViewed(SelectedItem)"><MudIcon Icon="@Icons.Material.Rounded.RemoveRedEye"></MudIcon> Add to viewed list</MudButton>
-            <MudButton Size="Size.Small" Color="Color.Tertiary" @onclick="e=>AddToFavorite(SelectedItem)"><MudIcon Icon="@Icons.Material.Rounded.Favorite"></MudIcon> Add to favorite list</MudButton>
-            <MudButton Size="Size.Small" Color="Color.Tertiary" @onclick="e=>Redirect(SelectedItem)"><MudIcon Icon="@Icons.Material.Rounded.ArtTrack"></MudIcon> Movie page</MudButton>
-        }
+
+    <div style="display:flex;gap:6px;margin-top:12px;">
+        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary"
+                   OnClick="e=>AddToViewed(SelectedItem!)"
+                   Style="flex:1;text-transform:none;font-size:0.78rem;">
+            <MudIcon Icon="@Icons.Material.Rounded.RemoveRedEye" Size="Size.Small" Class="mr-1" /> Viewed
+        </MudButton>
+        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Secondary"
+                   OnClick="e=>AddToFavorite(SelectedItem!)"
+                   Style="flex:1;text-transform:none;font-size:0.78rem;">
+            <MudIcon Icon="@Icons.Material.Rounded.Favorite" Size="Size.Small" Class="mr-1" /> Like
+        </MudButton>
     </div>
 </div>

@@ -1,21 +1,27 @@
 ﻿@inherits LayoutComponentBase
+@using TMDB_blazor.Data
 
 
-<MudThemeProvider />
+<MudThemeProvider Theme="TMDBTheme.Create()" IsDarkMode="true" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudLayout>
-    <MudAppBar Style="background-color:black">
-        My movie theater
+    <MudAppBar Elevation="0">
+        <MudText Typo="Typo.h6" Class="ml-2" Style="font-weight:700;letter-spacing:-0.5px;background:linear-gradient(135deg,#14B8A6,#6366F1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+            My movie theater
+        </MudText>
+        <MudSpacer />
         <MudIconButton Href="/" Icon="@Icons.Material.Rounded.MovieFilter" Color="Color.Inherit" Edge="Edge.Start" />
-        <MudButton Href="/favorite">Favorites</MudButton>
-        <MudButton Href="/viewed">Viewed</MudButton>
-        <MudButton Href="/search">Search</MudButton>
+        <MudButton Href="/favorite" Variant="Variant.Text" Color="Color.Inherit" Style="text-transform:none;">Favorites</MudButton>
+        <MudButton Href="/viewed" Variant="Variant.Text" Color="Color.Inherit" Style="text-transform:none;">Viewed</MudButton>
+        <MudButton Href="/search" Variant="Variant.Text" Color="Color.Inherit" Style="text-transform:none;">Search</MudButton>
     </MudAppBar>
 
-    <MudMainContent>
+    <MudMainContent Style="min-height:100vh;">
         @Body
     </MudMainContent>
+    <div style="text-align:center;padding:1rem;color:#334155;font-size:0.75rem;">
+        TMDB Explorer · <span style="color:#14B8A6;">net11.0</span> · MudBlazor 9.5
+    </div>
 </MudLayout>
-

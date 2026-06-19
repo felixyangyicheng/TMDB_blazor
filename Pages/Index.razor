@@ -2,161 +2,147 @@
 @using TMDbLib.Objects.Search
 @using TMDB_blazor.Components
 @using TMDB_blazor.Data
+
 @if (list != null)
 {
-    <MudContainer>
+    <MudContainer Class="my-4">
 
-
-
-        <div class="@popularStyle">
-            <div class="col">
-
-                <Populars OnSelectItem="Select"></Populars>
-            </div>
-            <div class="col">
-                @if (SelectItem != null)
-                {
-
-                        <MovieDetail SelectedItem="SelectItem" OnMovieViewed="AddViewed" OnMovieLiked="AddLiked" />
-                }
-                else
-                {
-                        <MudCard Style="background-color:#212529">
-                            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
-                            <MudCardContent>
-                                <MudIcon Icon="@Icons.Material.Filled.ArrowBack"></MudIcon> <text>  Click poster to see details</text>
-                                <MudSkeleton Width="30%" Height="42px;" />
-                                <MudSkeleton Width="80%" />
-                                <MudSkeleton Width="100%" />
-                            </MudCardContent>
-                            <MudCardActions>
-                                <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
-                                <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
-                            </MudCardActions>
-                        </MudCard>
-                }
-            </div>
+        @* Hero — Popular carousel *@
+        <div class="@popularStyle animate-in">
+            <MudPaper Elevation="0" Class="pa-4 mb-4" Style="background:#111827;border:1px solid #1E293B;border-radius:12px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                    <h5 style="color:#F1F5F9;font-weight:700;margin:0;letter-spacing:-0.3px;">Trending Now</h5>
+                    <span class="chip-teal">@list.Results?.Count movies</span>
+                </div>
+                <div class="divider-gradient"></div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <Populars OnSelectItem="Select"></Populars>
+                    </div>
+                    <div class="col-md-5">
+                        @if (SelectItem != null)
+                        {
+                            <MovieDetail SelectedItem="SelectItem"
+                                         OnMovieViewed="AddViewed"
+                                         OnMovieLiked="AddLiked" />
+                        }
+                        else
+                        {
+                            <div style="background:#0F172A;border:1px dashed #1E293B;border-radius:10px;padding:32px 20px;text-align:center;">
+                                <MudIcon Icon="@Icons.Material.Rounded.TouchApp" Color="Color.Default" Size="Size.Large" Style="opacity:0.4;" />
+                                <p style="color:#64748B;margin-top:12px;font-size:0.85rem;">Click a poster to preview</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </MudPaper>
         </div>
 
-        <div class="row">
-            <MudButton Color="Color.Primary" @onclick="e=>ChangeVisibility()">@PopularButtonString</MudButton>
+        @* Controls bar *@
+        <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+            <MudButton OnClick="e=>ChangeVisibility()"
+                       Color="@(popularVisible ? Color.Primary : Color.Default)"
+                       Variant="Variant.Outlined" Size="Size.Small"
+                       StartIcon="@Icons.Material.Rounded.Visibility"
+                       Style="text-transform:none;">
+                @PopularButtonString
+            </MudButton>
             <SearchBarItem OnSearchChanged="SearchChanged" />
-
         </div>
-        <div class="row">
-            <div class="col">
-                @if (favorites != null)
-                {
 
+        @* Lists — Favorites / Viewed *@
+        <div class="row">
+            <div class="col-md-6">
+                @if (favorites is { Count: > 0 })
+                {
+                    <MudPaper Elevation="0" Class="pa-4 mb-3 animate-in" Style="background:#111827;border:1px solid #1E293B;border-radius:12px;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                            <h5 style="color:#F1F5F9;font-weight:700;margin:0;letter-spacing:-0.3px;">⭐ Favorites</h5>
+                            <span class="chip-teal">@favorites.Count</span>
+                        </div>
+                        <div class="divider-gradient"></div>
                         <GenericList T="UserMovie" Items="FiltredFavorites" ItemsPerPage="@itemsPerPage">
                             <TableHeader>
-                                <tr>Favorites</tr>
-
                                 <tr>
-
                                     <th>Title</th>
-
-                                    <th>Release Date</th>
-                                    <th>Vote Average</th>
-                                    <th>Vote Count</th>
-                                    <th>+18 Content?</th>
+                                    <th style="text-align:center;">Release</th>
+                                    <th style="text-align:center;">Rating</th>
+                                    <th style="text-align:center;">Votes</th>
+                                    <th></th>
                                 </tr>
                             </TableHeader>
                             <ItemTemplate Context="liked">
                                 <tr>
-
-                                    <td>@liked.Title</td>
-                                    @if (liked.ReleaseDate is not null)
-                        {
-                            
-                                    <td>@liked.ReleaseDate?.ToString("d")</td>
-                        }
-                                    <td>@liked.VoteAverage</td>
-                                    <td>@liked.VoteCount</td>
+                                    <td style="font-weight:500;">@liked.Title</td>
+                                    <td style="text-align:center;color:#94A3B8;">@liked.ReleaseDate?.ToString("d")</td>
+                                    <td style="text-align:center;">⭐ <span style="color:#F59E0B;">@liked.VoteAverage</span></td>
+                                    <td style="text-align:center;color:#64748B;">@liked.VoteCount</td>
                                     <td>
-                                    @if (liked.Adult == true)
-                                    {
-                                                <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
-
-                                    }
-                                    else
-                                    {
-
-                                                <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
-                                    }
+                                        @if (liked.Adult == true) { <span class="chip-red">+18</span> }
                                     </td>
                                 </tr>
                             </ItemTemplate>
                             <TableFooter></TableFooter>
-
                         </GenericList>
-
+                    </MudPaper>
+                }
+                else
+                {
+                    <MudPaper Elevation="0" Class="pa-4 mb-3 animate-in" Style="background:#111827;border:1px solid #1E293B;border-radius:12px;text-align:center;padding:32px;">
+                        <MudIcon Icon="@Icons.Material.Rounded.FavoriteBorder" Color="Color.Default" Size="Size.Large" Style="opacity:0.3;" />
+                        <p style="color:#64748B;margin-top:8px;">No favorites yet</p>
+                    </MudPaper>
                 }
             </div>
-            <div class="col">
-                @if (viewed != null)
+            <div class="col-md-6">
+                @if (viewed is { Count: > 0 })
                 {
+                    <MudPaper Elevation="0" Class="pa-4 mb-3 animate-in" Style="background:#111827;border:1px solid #1E293B;border-radius:12px;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                            <h5 style="color:#F1F5F9;font-weight:700;margin:0;letter-spacing:-0.3px;">👁️ Watched</h5>
+                            <span class="chip-teal">@viewed.Count</span>
+                        </div>
+                        <div class="divider-gradient"></div>
                         <GenericList T="UserMovie" Items="FiltredViewed" ItemsPerPage="@itemsPerPage">
                             <TableHeader>
-                                <tr>Viewed</tr>
                                 <tr>
-
                                     <th>Title</th>
-                                    <th>Release Date</th>
-                                    <th>Vote Average</th>
-                                    <th>Vote Count</th>
-                                    <th>+18 Content?</th>
-
+                                    <th style="text-align:center;">Release</th>
+                                    <th style="text-align:center;">Rating</th>
+                                    <th style="text-align:center;">Votes</th>
+                                    <th></th>
                                 </tr>
                             </TableHeader>
                             <ItemTemplate Context="watch">
                                 <tr>
-
-                                    <td>@watch.Title</td>
-                                                                @if (watch.ReleaseDate is not null)
-                        {
-                            
-                            <td>@watch.ReleaseDate?.ToString("d")</td>
-                        }
-                                
-
-                                    <td>@watch.VoteAverage</td>
-                                    <td>@watch.VoteCount</td>
+                                    <td style="font-weight:500;">@watch.Title</td>
+                                    <td style="text-align:center;color:#94A3B8;">@watch.ReleaseDate?.ToString("d")</td>
+                                    <td style="text-align:center;">⭐ <span style="color:#F59E0B;">@watch.VoteAverage</span></td>
+                                    <td style="text-align:center;color:#64748B;">@watch.VoteCount</td>
                                     <td>
-                                    @if (watch.Adult == true)
-                                    {
-                                                <MudIcon Icon="@Icons.Material.Filled.DoDisturb"></MudIcon>
-
-                                    }
-                                    else
-                                    {
-
-                                                <MudIcon Icon="@Icons.Material.Filled.ChildCare"></MudIcon>
-                                    }
+                                        @if (watch.Adult == true) { <span class="chip-red">+18</span> }
                                     </td>
-
                                 </tr>
-
                             </ItemTemplate>
-                            <TableFooter>
-
-
-                            </TableFooter>
-
+                            <TableFooter></TableFooter>
                         </GenericList>
+                    </MudPaper>
+                }
+                else
+                {
+                    <MudPaper Elevation="0" Class="pa-4 mb-3 animate-in" Style="background:#111827;border:1px solid #1E293B;border-radius:12px;text-align:center;padding:32px;">
+                        <MudIcon Icon="@Icons.Material.Rounded.VisibilityOff" Color="Color.Default" Size="Size.Large" Style="opacity:0.3;" />
+                        <p style="color:#64748B;margin-top:8px;">No watched movies yet</p>
+                    </MudPaper>
                 }
             </div>
-
         </div>
     </MudContainer>
-
 }
 else
 {
-          <p>
-
-          Loading...
-          </p>
-            <Fold Color="rgba(245, 174, 39, 0.87)" />
+    <div style="display:flex;justify-content:center;align-items:center;height:60vh;flex-direction:column;">
+        <Fold Color="#14B8A6" />
+        <p style="color:#94A3B8;margin-top:16px;">Loading...</p>
+    </div>
 }
-

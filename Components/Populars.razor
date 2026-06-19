@@ -1,40 +1,33 @@
 ﻿@page "/popular"
-@if (_source!=null&&SearchContainer!=null)
-{	
-	<MudCarousel  @ref="_carousel" ItemsSource="@_source" @bind-SelectedIndex="selectedIndex" Style="height:300px;" ShowArrows="@_arrows" ShowBullets="@_bullets" EnableSwipeGesture="@_enableSwipeGesture" AutoCycle="@_autocycle">
-		<ItemTemplate>
-			<div class="d-flex flex-column flex-column justify-center" style="height:120%">
-				<MudImage Src="@GetCompletedPosterPath(SearchContainer.Results?[selectedIndex]?.PosterPath ?? "")" Width="130" Alt="@AlternativeImage" Elevation="25" Class="mx-auto rounded-lg ma-4" />
-				<MudButton Variant="Variant.Text" Color="Color.Secondary" @onclick=" e=>ClickMovie(selectedIndex)">@context</MudButton>
-			</div>
-		</ItemTemplate>
-	</MudCarousel>
-	<MudSwitch T="bool" @bind-Value="@_autocycle" Color="Color.Primary">Auto Cycle</MudSwitch>
-	<MudSelect @bind-Value="selectedIndex" Style="width:50%">
-		@{
-			int index = 0;
-			if (SearchContainer.Results==null)
-			{
-				<p>
-				loading..
-				</p>
-			}
-			else
-			{
-				
-				foreach (var item in SearchContainer.Results)
-				{
-					<MudSelectItem Value="@index">
-				
-						<p>@item.Title</p>
-					</MudSelectItem>
-					if (index==SearchContainer.Results.Count())
-					{
-						index = 0;
-					}
-					index++;
-				}
-			}
-		}
-	</MudSelect>
+
+@if (_source != null && SearchContainer != null)
+{
+    <MudCarousel @ref="_carousel" ItemsSource="@_source"
+                 @bind-SelectedIndex="selectedIndex"
+                 Style="height:280px;" ShowArrows="@_arrows"
+                 ShowBullets="true" EnableSwipeGesture="@_enableSwipeGesture"
+                 AutoCycle="@_autocycle">
+        <ItemTemplate>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;">
+                <div class="poster-border" style="width:120px;">
+                    <MudImage Src="@GetCompletedPosterPath(SearchContainer.Results?[selectedIndex]?.PosterPath ?? "")"
+                              Width="120" Alt="poster"
+                              Style="display:block;" />
+                </div>
+                <MudButton Variant="Variant.Text" Color="Color.Primary"
+                           OnClick="e => ClickMovie(selectedIndex)"
+                           Style="text-transform:none;font-weight:500;">
+                    @context
+                </MudButton>
+            </div>
+        </ItemTemplate>
+    </MudCarousel>
+
+    <div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-top:4px;">
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
+                   OnClick="e => _autocycle = !_autocycle"
+                   Style="text-transform:none;">
+            Auto @(_autocycle ? "ON" : "OFF")
+        </MudButton>
+    </div>
 }

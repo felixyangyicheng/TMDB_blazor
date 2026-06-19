@@ -1,50 +1,54 @@
 ﻿@page "/viewed"
-@if (FiltredViewed != null)
-{
-        <MudContainer>
 
-        <div class="row">
-            <SearchBarItem OnSearchChanged="SearchChanged" />
+<MudContainer Class="my-4 animate-in">
+    <MudPaper Elevation="0" Class="pa-4" Style="background:#111827;border:1px solid #1E293B;border-radius:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <h5 style="color:#F1F5F9;font-weight:700;margin:0;letter-spacing:-0.3px;">👁️ Watched History</h5>
+            <span class="chip-teal">@(viewed?.Count ?? 0) movies</span>
         </div>
-        <GenericList T="UserMovie" Items="FiltredViewed" ItemsPerPage="4">
-            <TableHeader>
-                <tr>
-                    <th style="width: min-content;">Poster</th>
-                    <th>Title</th>
-                    <th>OriginalTitle</th>
-                    <th>Language</th>
-                    <th>Popularity</th>
-                    <th>ReleaseDate</th>
-                    <th>Average</th>
-                    <th>VoteCount</th>
-                    <th>Overview</th>
-                    <th></th>
-                </tr>
-            </TableHeader>
-            <ItemTemplate Context="i">
-                <tr>
-                    <td>
-                        <MudImage Src="@GetCompletedPosterPath(i.PosterPath)" Width="90" Alt="movie poster" Elevation="25" Class="mx-auto rounded-lg ma-4" />
-                    </td>
-                    <td>@i.Title</td>
-                    <td>@i.OriginalTitle</td>
-                    <td>@i.OriginalLanguage</td>
-                    <td>@i.Popularity</td>
-                    <td>@i.ReleaseDate?.ToString("d")</td>
-                    <td>@i.VoteAverage</td>
-                    <td>@i.VoteCount</td>
-                    <td>@i.Overview</td>
-                    <td>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Warning" @onclick="e=>RemoveFromList(i)"></MudIconButton>
-                    </td>
-                </tr>
-            </ItemTemplate>
-            <TableFooter>
-                <tr></tr>
-                <tr></tr>
-                <tr></tr>
-            </TableFooter>
-        </GenericList>
-        </MudContainer>
-
-}
+        <div class="divider-gradient"></div>
+        <SearchBarItem OnSearchChanged="SearchChanged" />
+        @if (viewed is { Count: > 0 })
+        {
+            <GenericList T="UserMovie" Items="FiltredViewed" ItemsPerPage="6">
+                <TableHeader>
+                    <tr>
+                        <th style="width:60px;"></th>
+                        <th>Title</th>
+                        <th style="text-align:center;">Release</th>
+                        <th style="text-align:center;">Rating</th>
+                        <th style="text-align:center;">Votes</th>
+                        <th></th>
+                    </tr>
+                </TableHeader>
+                <ItemTemplate Context="i">
+                    <tr>
+                        <td>
+                            <MudImage Src="@GetCompletedPosterPath(i.PosterPath)" Width="44" Alt="poster"
+                                      Style="border-radius:4px;display:block;" />
+                        </td>
+                        <td>
+                            <span style="font-weight:500;">@i.Title</span>
+                            <span style="color:#64748B;font-size:0.72rem;display:block;">@i.OriginalTitle</span>
+                        </td>
+                        <td style="text-align:center;color:#94A3B8;">@i.ReleaseDate?.ToString("d")</td>
+                        <td style="text-align:center;">⭐ <span style="color:#F59E0B;">@i.VoteAverage</span></td>
+                        <td style="text-align:center;color:#64748B;">@i.VoteCount</td>
+                        <td>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                           Size="Size.Small" OnClick="e=>RemoveFromList(i)" />
+                        </td>
+                    </tr>
+                </ItemTemplate>
+                <TableFooter></TableFooter>
+            </GenericList>
+        }
+        else
+        {
+            <div style="text-align:center;padding:40px 0;">
+                <MudIcon Icon="@Icons.Material.Rounded.VisibilityOff" Color="Color.Default" Size="Size.Large" Style="opacity:0.2;" />
+                <p style="color:#64748B;margin-top:12px;">No watched movies yet. Mark a movie as viewed!</p>
+            </div>
+        }
+    </MudPaper>
+</MudContainer>

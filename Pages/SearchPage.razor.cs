@@ -122,9 +122,13 @@ namespace TMDB_blazor.Pages
             if (!string.IsNullOrEmpty(searchWord))
             {
                 loading = true;
-                DisplayResult = await _TmdbExtension.SearcheWithLocalFilter(searchWord, SearchViewedEnable, SearchLikedEnable, SearchAdultEnable);          
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);  // afficher immédiatement le chargement
+
+                DisplayResult = await _TmdbExtension.SearcheWithLocalFilter(
+                    searchWord, SearchViewedEnable, SearchLikedEnable, SearchAdultEnable);
+
                 loading = false;
+                await InvokeAsync(StateHasChanged);  // rafraîchir avec les résultats
             }
         }
         protected async Task ChangeSearchViewedCondition()
